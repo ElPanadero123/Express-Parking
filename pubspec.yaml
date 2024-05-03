@@ -39,6 +39,7 @@ dependencies:
   table_calendar: ^3.0.0
   google_maps_flutter: ^2.5.3
   flutter_launcher_icons: ^0.13.1
+  image_picker: ^0.8.4+4
 
 dev_dependencies:
   flutter_test:
