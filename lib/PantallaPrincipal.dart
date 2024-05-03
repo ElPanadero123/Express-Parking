@@ -1,3 +1,4 @@
+import 'package:express_parking/Listas/HistorialParqueadas.dart';
 import 'package:express_parking/Listas/ParkingList.dart';
 import 'package:express_parking/Listas/VehiculosList.dart';
 import 'package:flutter/material.dart';
@@ -110,7 +111,13 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               ListTile(
                 leading: Icon(Icons.history, color: Colors.grey[600]),
                 title: Text('Historial'),
-                onTap: () {}, // Implementar navegación
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HistorialParqueadas()));
+                }, // Implementar navegación
               ),
               ListTile(
                 leading: Icon(Icons.exit_to_app, color: Colors.red),

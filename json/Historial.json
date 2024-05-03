@@ -1,0 +1,17 @@
+[
+    {
+        "hora_inicio": "08:00",
+        "hora_fin": "12:00",
+        "precio": 10.50
+    },
+    {
+        "hora_inicio": "14:30",
+        "hora_fin": "18:00",
+        "precio": 15.75
+    },
+    {
+        "hora_inicio": "09:45",
+        "hora_fin": "11:30",
+        "precio": 8.20
+    }
+]
