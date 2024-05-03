@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'PantallaPrincipal.dart';
 
 class LoginPage extends StatelessWidget {
@@ -125,7 +126,8 @@ class RegistroPage extends StatelessWidget {
     final ciController = TextEditingController();
     final correoController = TextEditingController();
     final passwordController = TextEditingController();
-    final celularController = TextEditingController(); // Nuevo controlador para el número de celular
+    final telefonoController = TextEditingController();
+    final imagenPerfilController = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
     return Scaffold(
@@ -133,6 +135,19 @@ class RegistroPage extends StatelessWidget {
         backgroundColor: Colors.deepPurple.shade200,
         title: Text(" REGISTRATE AQUI "),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () {
+                // Aquí puedes implementar la lógica para seleccionar una imagen de perfil
+                // Por ahora, simplemente imprimiremos un mensaje
+                print('Seleccionar imagen de perfil');
+              },
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -166,13 +181,11 @@ class RegistroPage extends StatelessWidget {
                   const SizedBox(height: 10),
                   _buildTextField(Icons.password, "Contraseña", passwordController),
                   const SizedBox(height: 10),
-                  _buildTextField(Icons.phone, "Número de Celular", celularController), // Nuevo campo de número de celular
+                  _buildTextField(Icons.phone, "Teléfono", telefonoController),
+                  const SizedBox(height: 10),
+                  _buildTextField(Icons.image, "Imagen de Perfil", imagenPerfilController, isRequired: false),
                   const SizedBox(height: 30),
-                  _buildButton(Icons.app_registration, "REGISTRARSE", () {
-                    if (formKey.currentState!.validate()) {
-                      // Aquí puedes definir la lógica para el registro
-                    }
-                  }),
+                  _buildButton(Icons.app_registration, "REGISTRARSE", context, formKey, nombreController, apellidoController, ciController, correoController, telefonoController, passwordController, imagenPerfilController),
                 ],
               ),
             ),
@@ -182,14 +195,21 @@ class RegistroPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField(IconData icon, String label, TextEditingController controller) {
+  Widget _buildTextField(IconData icon, String label, TextEditingController controller, {bool isRequired = true}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: TextFormField(
         controller: controller,
         validator: (value) {
-          if (value == null || value.isEmpty) {
+          if (isRequired && (value == null || value.isEmpty)) {
             return 'Este campo es obligatorio';
+          }
+          // Validación adicional para los campos de CI y Teléfono
+          if (label == 'CI' && (value != null && value.isNotEmpty && int.tryParse(value) == null)) {
+            return 'Ingrese un valor numérico válido';
+          }
+          if (label == 'Teléfono' && (value != null && value.isNotEmpty && int.tryParse(value) == null)) {
+            return 'Ingrese un número de teléfono válido';
           }
           return null;
         },
@@ -202,9 +222,32 @@ class RegistroPage extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(IconData icon, String text, void Function() onTap) {
+  Widget _buildButton(IconData icon, String text, BuildContext context, GlobalKey<FormState> formKey, TextEditingController nombreController, TextEditingController apellidoController, TextEditingController ciController, TextEditingController correoController, TextEditingController telefonoController, TextEditingController passwordController, TextEditingController imagenPerfilController) {
     return ElevatedButton.icon(
-      onPressed: onTap,
+      onPressed: () {
+        if (formKey.currentState!.validate()) {
+          // Realizar la conversión adecuada para los campos numéricos (CI y teléfono)
+          final int ci = int.tryParse(ciController.text) ?? 0;
+          final int telefono = int.tryParse(telefonoController.text) ?? 0;
+
+          // Aquí puedes definir la lógica para el registro
+          // Por ahora, simplemente imprimiremos los valores
+
+          print('Nombre: ${nombreController.text}');
+          print('Apellido: ${apellidoController.text}');
+          print('CI: $ci');
+          print('Correo: ${correoController.text}');
+          print('Teléfono: $telefono');
+          print('Contraseña: ${passwordController.text}');
+          print('Imagen de Perfil: ${imagenPerfilController.text}');
+
+          // Después de realizar el registro, puedes navegar a la pantalla principal
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => PantallaPrincipal()),
+          );
+        }
+      },
       icon: Icon(icon),
       label: Text(text),
     );
