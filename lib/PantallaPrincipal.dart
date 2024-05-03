@@ -1,3 +1,6 @@
+import 'package:express_parking/Listas/HistorialParqueadas.dart';
+import 'package:express_parking/Listas/ParkingList.dart';
+import 'package:express_parking/Listas/VehiculosList.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'FormularioGaraje.dart';
@@ -87,10 +90,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 title: Text('Registro de Garaje'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FormularioGaraje()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => parkingList()));
                 },
               ),
               ListTile(
@@ -98,10 +99,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 title: Text('Registro de Vehículo'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FormularioAuto()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => VehiculosList()));
                 },
               ),
               ListTile(
@@ -112,7 +111,13 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               ListTile(
                 leading: Icon(Icons.history, color: Colors.grey[600]),
                 title: Text('Historial'),
-                onTap: () {}, // Implementar navegación
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HistorialParqueadas()));
+                }, // Implementar navegación
               ),
               ListTile(
                 leading: Icon(Icons.exit_to_app, color: Colors.red),
