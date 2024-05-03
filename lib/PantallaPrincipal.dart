@@ -3,6 +3,8 @@ import 'package:express_parking/Listas/ParkingList.dart';
 import 'package:express_parking/Listas/VehiculosList.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'formularios/FormularioGaraje.dart';
+import 'formularios/FormularioAuto.dart';
 import 'formularios/CrearOferta.dart';
 import 'package:flutter/services.dart'; // Importar el paquete services
 
