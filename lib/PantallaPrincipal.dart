@@ -3,8 +3,7 @@ import 'package:express_parking/Listas/ParkingList.dart';
 import 'package:express_parking/Listas/VehiculosList.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'FormularioGaraje.dart';
-import 'FormularioAuto.dart';
+import 'formularios/CrearOferta.dart';
 import 'package:flutter/services.dart'; // Importar el paquete services
 
 class PantallaPrincipal extends StatefulWidget {
@@ -106,7 +105,10 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               ListTile(
                 leading: Icon(Icons.campaign, color: Colors.grey[600]),
                 title: Text('Creación de Oferta'),
-                onTap: () {}, // Implementar navegación
+                 onTap: () {
+                   Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => CrearOfertaPage()),);
+                }, // Implementar navegación
               ),
               ListTile(
                 leading: Icon(Icons.history, color: Colors.grey[600]),
