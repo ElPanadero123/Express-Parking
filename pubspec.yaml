@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   table_calendar: ^3.0.0
   google_maps_flutter: ^2.5.3
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:

@@ -35,9 +35,9 @@ class Splash_Screen extends StatelessWidget {
       );
     });
 
-    return Scaffold(
+    return const Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -47,7 +47,7 @@ class Splash_Screen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     "BIENVENIDO A EXPRESS PARKING",
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -55,7 +55,7 @@ class Splash_Screen extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                 ],
               ),
             ),
