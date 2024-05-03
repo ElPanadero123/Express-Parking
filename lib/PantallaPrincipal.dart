@@ -3,6 +3,7 @@ import 'package:express_parking/Listas/ParkingList.dart';
 import 'package:express_parking/Listas/VehiculosList.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:express_parking/Usuario/user.dart';
 import 'formularios/CrearOferta.dart';
 import 'package:flutter/services.dart'; // Importar el paquete services
 
@@ -43,7 +44,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
         title: Container(
           padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: Color.fromARGB(136, 224, 224, 224),
+            color: Color.fromARGB(150, 255, 255, 255),
             borderRadius: BorderRadius.circular(30),
           ),
           child: TextField(
@@ -69,20 +70,24 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 accountEmail: Text("josealem03@gmail.com"),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.grey[700],
-                  child: Align(
+                  child: const Align(
                     alignment: Alignment(
                         0, 0.3), // Ajusta la posición vertical del ícono
                     child: Icon(Icons.person, size: 50.0, color: Colors.white),
                   ),
                 ),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 250, 205, 83), // Color amarillo
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 147, 83, 250), // Color amarillo
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.account_circle, color: Colors.grey[600]),
                 title: Text('Mi cuenta'),
-                onTap: () {}, // Implementar navegación
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => UserProfileScreen()));
+                }, // Implementar navegación
               ),
               ListTile(
                 leading: Icon(Icons.garage, color: Colors.grey[600]),
@@ -105,8 +110,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               ListTile(
                 leading: Icon(Icons.campaign, color: Colors.grey[600]),
                 title: Text('Creación de Oferta'),
-                 onTap: () {
-                   Navigator.push(context,
+                onTap: () {
+                  Navigator.push(context,
                         MaterialPageRoute(builder: (context) => CrearOfertaPage()),);
                 }, // Implementar navegación
               ),
