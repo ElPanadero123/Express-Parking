@@ -100,7 +100,7 @@ class parkingListState extends State<parkingList> {
             MaterialPageRoute(builder: (context) => FormularioGaraje()),
           );
         },
-        tooltip: 'Crear nuevo vehículo',
+        tooltip: 'Crear nuevo garaje',
         child: Icon(Icons.add),
       ),
     );

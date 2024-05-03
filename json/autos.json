@@ -1,0 +1,29 @@
+[
+    
+      {
+        "matricula": "ABC123",
+        "color": "Rojo",
+        "altura": 1.5,
+        "ancho": 1.8,
+        "largo": 4.5,
+        "modelo": "Sedán"
+      },
+      {
+        "matricula": "DEF456",
+        "color": "Azul",
+        "altura": 1.6,
+        "ancho": 1.9,
+        "largo": 4.7,
+        "modelo": "SUV"
+      },
+      {
+        "matricula": "GHI789",
+        "color": "Negro",
+        "altura": 1.7,
+        "ancho": 2.0,
+        "largo": 4.8,
+        "modelo": "Coupé"
+      }
+    
+]
+  

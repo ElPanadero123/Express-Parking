@@ -1,4 +1,5 @@
 import 'package:express_parking/Listas/ParkingList.dart';
+import 'package:express_parking/Listas/VehiculosList.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'FormularioGaraje.dart';
@@ -97,10 +98,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 title: Text('Registro de Vehículo'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FormularioAuto()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => VehiculosList()));
                 },
               ),
               ListTile(
