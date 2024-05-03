@@ -44,7 +44,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
         title: Container(
           padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: Color.fromARGB(136, 224, 224, 224),
+            color: Color.fromARGB(150, 255, 255, 255),
             borderRadius: BorderRadius.circular(30),
           ),
           child: TextField(
