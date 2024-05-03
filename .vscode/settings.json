@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/GAMER/Documents/Express-Parking/linux"
+    "cmake.sourceDirectory": "C:/Users/GAMER/Documents/Express-Parking/linux",
+    "C_Cpp.errorSquiggles": "disabled"
 }
