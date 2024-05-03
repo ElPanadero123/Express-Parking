@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'FormularioGaraje.dart';
 import 'FormularioAuto.dart';
+import 'package:flutter/services.dart'; // Importar el paquete services
 
 class PantallaPrincipal extends StatefulWidget {
   const PantallaPrincipal({Key? key}) : super(key: key);
@@ -19,6 +20,13 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      statusBarColor:
+          Colors.transparent, // Color de fondo de la barra de estado
+      statusBarIconBrightness:
+          Brightness.dark, // Iconos de la barra de estado oscuros
+    ));
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -48,72 +56,83 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
         ),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: Text("JOSE ALEM RODRIGUEZ VALVERDE"),
-              accountEmail: Text("josealem03@gmail.com"),
-              currentAccountPicture: CircleAvatar(
-                child: Icon(Icons.person, size: 50.0, color: Colors.white),
-                backgroundColor: Colors.grey[700],
+        child: MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          child: ListView(
+            children: <Widget>[
+              SizedBox(height: 20), // Espacio adicional para bajar el header
+              UserAccountsDrawerHeader(
+                accountName: Text("JOSE ALEM RODRIGUEZ VALVERDE"),
+                accountEmail: Text("josealem03@gmail.com"),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.grey[700],
+                  child: Align(
+                    alignment: Alignment(
+                        0, 0.3), // Ajusta la posición vertical del ícono
+                    child: Icon(Icons.person, size: 50.0, color: Colors.white),
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 250, 205, 83), // Color amarillo
+                ),
               ),
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 250, 205, 83),
+              ListTile(
+                leading: Icon(Icons.account_circle, color: Colors.grey[600]),
+                title: Text('Mi cuenta'),
+                onTap: () {}, // Implementar navegación
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.garage, color: Colors.grey[600]),
-              title: Text('Agregar Garaje'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FormularioGaraje()));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_car, color: Colors.grey[600]),
-              title: Text('Agregar Auto'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FormularioAuto()));
-              },
-            ),
-          ],
+              ListTile(
+                leading: Icon(Icons.garage, color: Colors.grey[600]),
+                title: Text('Registro de Garaje'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FormularioGaraje()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.directions_car, color: Colors.grey[600]),
+                title: Text('Registro de Vehículo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FormularioAuto()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.campaign, color: Colors.grey[600]),
+                title: Text('Creación de Oferta'),
+                onTap: () {}, // Implementar navegación
+              ),
+              ListTile(
+                leading: Icon(Icons.history, color: Colors.grey[600]),
+                title: Text('Historial'),
+                onTap: () {}, // Implementar navegación
+              ),
+              ListTile(
+                leading: Icon(Icons.exit_to_app, color: Colors.red),
+                title: Text('Cerrar sesión'),
+                onTap: () {
+                  Navigator.of(context)
+                      .pop(); // Implementar funcionalidad de cierre de sesión
+                },
+              ),
+            ],
+          ),
         ),
       ),
-      body: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50),
-              topRight: Radius.circular(50),
-            ),
-            child: GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(-17.78629, -63.18117),
-                zoom: 11.0,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: kToolbarHeight + MediaQuery.of(context).padding.top,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(20)),
-              ),
-            ),
-          ),
-        ],
+      body: GoogleMap(
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: LatLng(-17.78629, -63.18117),
+          zoom: 11.0,
+        ),
+        mapType: MapType.normal,
       ),
     );
   }
