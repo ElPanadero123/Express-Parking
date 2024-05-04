@@ -1,6 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Formulario de Garaje',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: FormularioGaraje(),
+    );
+  }
+}
+
 class FormularioGaraje extends StatelessWidget {
   const FormularioGaraje({Key? key});
 
@@ -42,27 +59,25 @@ class FormularioGaraje extends StatelessWidget {
                   _buildTextField(Icons.description, "Descripción del Garaje", descripcionController),
                   SizedBox(height: 20),
                   Row(
-          children:[
-  Center(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: Text(
-            "Secciones",
-            style: TextStyle(fontSize: 18),
-          ),
-        ),
-        SizedBox(height: 40.0), // Espacio entre el texto y el DropdownButton
-      ],
-    ),
-  ),
-  seccionesGuardadas
-      ? _buildDropdownButton(context)
-      : _buildAgregarSeccionButton(context),
-],
-
-
+                    children: [
+                      Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                "Secciones",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            SizedBox(height: 40.0), // Espacio entre el texto y el DropdownButton
+                          ],
+                        ),
+                      ),
+                      seccionesGuardadas
+                          ? _buildDropdownButton(context)
+                          : _buildAgregarSeccionButton(context),
+                    ],
                   ),
                   SizedBox(height: 80),
                   _buildButton(Icons.save, "GUARDAR GARAJE", () {}),
@@ -108,49 +123,47 @@ class FormularioGaraje extends StatelessWidget {
     );
   }
 
-Widget _buildDropdownButton(BuildContext context) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-  padding: const EdgeInsets.symmetric(vertical: 20),
-  child: Center(
-    child: Text(
-      "Secciones",
-      style: TextStyle(fontSize: 18),
-    ),
-  ),
-),
-
-      DropdownButton<String>(
-        alignment: Alignment.centerLeft, // Alinea el DropdownButton a la izquierda
-        items: [
-          DropdownMenuItem<String>(
-            value: 'Sección A',
-            child: Text('Sección A'),
+  Widget _buildDropdownButton(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Center(
+            child: Text(
+              "Secciones",
+              style: TextStyle(fontSize: 18),
+            ),
           ),
-          DropdownMenuItem<String>(
-            value: 'Sección B',
-            child: Text('Sección B'),
-          ),
-          DropdownMenuItem<String>(
-            value: 'Sección C',
-            child: Text('Sección C'),
-          ),
-        ],
-        onChanged: (value) {
-          if (value == "Agregar Sección") {
-            _mostrarFormularioSeccion(context);
-          } else {
-            _mostrarToast(context, "Secciones: $value");
-          }
-        },
-        hint: Text('Seleccionar Sección'),
-      ),
-    ],
-  );
-}
-
+        ),
+        DropdownButton<String>(
+          alignment: Alignment.centerLeft, // Alinea el DropdownButton a la izquierda
+          items: [
+            DropdownMenuItem<String>(
+              value: 'Sección A',
+              child: Text('Sección A'),
+            ),
+            DropdownMenuItem<String>(
+              value: 'Sección B',
+              child: Text('Sección B'),
+            ),
+            DropdownMenuItem<String>(
+              value: 'Sección C',
+              child: Text('Sección C'),
+            ),
+          ],
+          onChanged: (value) {
+            if (value == "Agregar Sección") {
+              _mostrarFormularioSeccion(context);
+            } else {
+              _mostrarToast(context, "Secciones: $value");
+            }
+          },
+          hint: Text('Seleccionar Sección'),
+        ),
+      ],
+    );
+  }
 
   Widget _buildAgregarSeccionButton(BuildContext context) {
     return DropdownButton<String>(
