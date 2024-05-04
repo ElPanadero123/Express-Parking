@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:express_parking/FormularioAuto.dart';
-import 'package:express_parking/FormularioGaraje.dart';
+import 'package:express_parking/formularios/FormularioAuto.dart';
+import 'package:express_parking/formularios/FormularioGaraje.dart';
 import 'package:express_parking/fakeTaxi/ParqueosDataModel.dart';
 import 'package:express_parking/fakeTaxi/VehiculosDataModel.dart';
 import 'package:flutter/material.dart';
