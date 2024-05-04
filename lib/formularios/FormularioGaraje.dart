@@ -1,23 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Formulario de Garaje',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: FormularioGaraje(),
-    );
-  }
-}
-
 class FormularioGaraje extends StatelessWidget {
   const FormularioGaraje({Key? key});
 
