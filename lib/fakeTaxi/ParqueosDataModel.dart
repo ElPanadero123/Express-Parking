@@ -8,8 +8,8 @@ class ParqueosDataModel {
   double? largo;
   String? direccion;
   String? referencias;
-  String? latitud;
-  String? longitud;
+  double? latitud; // Cambiado de String? a double?
+  double? longitud; // Cambiado de String? a double?
   int? idUsuario;
 
   ParqueosDataModel({
@@ -26,13 +26,14 @@ class ParqueosDataModel {
   factory ParqueosDataModel.fromJson(Map<String, dynamic> json) {
     return ParqueosDataModel(
       id: json['id'],
-      ancho: json['ancho']
-          ?.toDouble(), // Convertir a double ya que el JSON puede contener enteros o números decimales
+      ancho: json['ancho']?.toDouble(),
       largo: json['largo']?.toDouble(),
       direccion: json['direccion'],
       referencias: json['referencias'],
-      latitud: json['latitud'],
-      longitud: json['longitud'],
+      latitud:
+          json['latitud'] != null ? double.tryParse(json['latitud']) : null,
+      longitud:
+          json['longitud'] != null ? double.tryParse(json['longitud']) : null,
       idUsuario: json['id_usuario'],
     );
   }
