@@ -117,7 +117,7 @@ class FormularioAuto extends StatelessWidget {
   Future<void> _enviarDatos(String jsonData) async {
     try {
       final response = await http.post(
-        Uri.parse('https://tu-backend.com/api/agregar_auto'),// cambiar url
+        Uri.parse('https://tu-backend.com/api/agregar_auto'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
