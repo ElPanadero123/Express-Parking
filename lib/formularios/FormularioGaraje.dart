@@ -1,3 +1,4 @@
+import 'package:express_parking/formularios/CrearOferta.dart';
 import 'package:flutter/material.dart';
 
 class FormularioGaraje extends StatelessWidget {
@@ -53,7 +54,17 @@ class FormularioGaraje extends StatelessWidget {
                   SizedBox(height: 10), // Espacio adicional entre los campos
                   _buildTextField(Icons.description, "Descripción del Garaje", descripcionController), // Nuevo campo de descripción
                   SizedBox(height: 80), // Ajusta el espacio según sea necesario
-                  _buildButton(Icons.save, "GUARDAR GARAJE", null),
+                  _buildButton(Icons.save, "CREA UNA OFERTA", () {
+                    if (formKey.currentState!.validate()) {
+                      // Aquí puedes definir la lógica para guardar los datos del garaje
+                      
+                      // Después de guardar los datos del garaje, navega a la pantalla CrearOfertaPage
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CrearOfertaPage()),
+                      );
+                    }
+                  }),
                 ],
               ),
             ),
@@ -63,32 +74,33 @@ class FormularioGaraje extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField(IconData icon, String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: SizedBox(
-        height: 100, // Altura máxima del campo de descripción antes de expandirse hacia abajo
-        child: TextFormField(
-          controller: controller,
-          maxLines: null, // Permite que el campo de texto tenga múltiples líneas
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Este campo es obligatorio';
-            }
-            return null;
-          },
-          decoration: InputDecoration(
-            labelText: label,
-            prefixIcon: Icon(icon),
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 10), // Espaciado interno vertical para el campo de texto
-          ),
+Widget _buildTextField(IconData icon, String label, TextEditingController controller) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: SizedBox(
+      height: 100, // Altura máxima del campo de descripción antes de expandirse hacia abajo
+      child: TextFormField(
+        controller: controller,
+        maxLines: null, // Permite que el campo de texto tenga múltiples líneas
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Este campo es obligatorio';
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(vertical: 10), // Espaciado interno vertical para el campo de texto
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget _buildButton(IconData icon, String text, void Function()? onTap) {
+
+  Widget _buildButton(IconData icon, String text, void Function() onTap) {
     return ElevatedButton.icon(
       onPressed: onTap,
       icon: Icon(icon),
