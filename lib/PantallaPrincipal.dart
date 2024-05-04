@@ -1,11 +1,13 @@
-import 'package:express_parking/Listas/HistorialParqueadas.dart';
-import 'package:express_parking/Listas/ParkingList.dart';
-import 'package:express_parking/Listas/VehiculosList.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:express_parking/Usuario/user.dart';
+import 'package:geolocator/geolocator.dart';
+import 'marcador/marker_manager.dart'; // Asegúrate de tener esta clase implementada
+import 'Listas/VehiculosList.dart';
+import 'Listas/ParkingList.dart';
 import 'formularios/CrearOferta.dart';
-import 'package:flutter/services.dart'; // Importar el paquete services
+import 'Listas/HistorialParqueadas.dart';
+import 'Usuario/user.dart';
 
 class PantallaPrincipal extends StatefulWidget {
   const PantallaPrincipal({Key? key}) : super(key: key);
@@ -14,20 +16,91 @@ class PantallaPrincipal extends StatefulWidget {
   _PantallaPrincipalState createState() => _PantallaPrincipalState();
 }
 
-class _PantallaPrincipalState extends State<PantallaPrincipal> {
+class _PantallaPrincipalState extends State<PantallaPrincipal>
+    with WidgetsBindingObserver {
   late GoogleMapController mapController;
+  late MarkerManager markerManager; 
+  Set<Marker> markers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    markerManager = MarkerManager(context); 
+    _loadMarkers();
+    _determinePosition();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    mapController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      mapController.setMapStyle("[]"); // Truco para refrescar el mapa
+    }
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
+Future<void> _loadMarkers() async {
+    try {
+      var markersData = await markerManager.loadMarkers();
+      setState(() {
+        markers = markersData;
+      });
+    } catch (e) {
+      print('Error al cargar marcadores: $e');
+    }
+    _determinePosition();
+  }
+
+  Future<void> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    mapController.animateCamera(CameraUpdate.newLatLngZoom(
+        LatLng(position.latitude, position.longitude), 14));
+    setState(() {
+      markers.add(Marker(
+        markerId: MarkerId("my_location"),
+        position: LatLng(position.latitude, position.longitude),
+        infoWindow: InfoWindow(title: "Mi Ubicación"),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      ));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-      statusBarColor:
-          Colors.transparent, // Color de fondo de la barra de estado
-      statusBarIconBrightness:
-          Brightness.dark, // Iconos de la barra de estado oscuros
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
     ));
 
     return Scaffold(
@@ -47,7 +120,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             color: Color.fromARGB(150, 255, 255, 255),
             borderRadius: BorderRadius.circular(30),
           ),
-          child: TextField(
+          child: const TextField(
             decoration: InputDecoration(
               hintText: "¿A dónde quieres ir?",
               border: InputBorder.none,
@@ -64,20 +137,19 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
           removeTop: true,
           child: ListView(
             children: <Widget>[
-              SizedBox(height: 20), // Espacio adicional para bajar el header
+              SizedBox(height: 20),
               UserAccountsDrawerHeader(
                 accountName: Text("JOSE ALEM RODRIGUEZ VALVERDE"),
                 accountEmail: Text("josealem03@gmail.com"),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.grey[700],
                   child: const Align(
-                    alignment: Alignment(
-                        0, 0.3), // Ajusta la posición vertical del ícono
+                    alignment: Alignment(0, 0.3),
                     child: Icon(Icons.person, size: 50.0, color: Colors.white),
                   ),
                 ),
                 decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 147, 83, 250), // Color amarillo
+                  color: Color.fromARGB(255, 147, 83, 250),
                 ),
               ),
               ListTile(
@@ -85,9 +157,11 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 title: Text('Mi cuenta'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => UserProfileScreen()));
-                }, // Implementar navegación
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserProfileScreen()));
+                },
               ),
               ListTile(
                 leading: Icon(Icons.garage, color: Colors.grey[600]),
@@ -111,9 +185,11 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 leading: Icon(Icons.campaign, color: Colors.grey[600]),
                 title: Text('Creación de Oferta'),
                 onTap: () {
-                  Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => CrearOfertaPage()),);
-                }, // Implementar navegación
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CrearOfertaPage()),
+                  );
+                },
               ),
               ListTile(
                 leading: Icon(Icons.history, color: Colors.grey[600]),
@@ -124,14 +200,13 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => HistorialParqueadas()));
-                }, // Implementar navegación
+                },
               ),
               ListTile(
                 leading: Icon(Icons.exit_to_app, color: Colors.red),
                 title: Text('Cerrar sesión'),
                 onTap: () {
-                  Navigator.of(context)
-                      .pop(); // Implementar funcionalidad de cierre de sesión
+                  Navigator.of(context).pop();
                 },
               ),
             ],
@@ -142,8 +217,9 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
           target: LatLng(-17.78629, -63.18117),
-          zoom: 11.0,
+          zoom: 14.0,
         ),
+        markers: markers,
         mapType: MapType.normal,
       ),
     );

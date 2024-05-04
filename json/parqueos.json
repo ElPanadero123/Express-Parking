@@ -5,8 +5,8 @@
         "largo": 80.5,
         "direccion": "Av Piray 6to anillo",
         "referencias": "porton azul",
-        "latitud": "10,32.13",
-        "longitud": "104130413",
+        "latitud": "-17.713606766611388",
+        "longitud": "-63.17146555223527",
         "id_usuario": 100
     },
     {
@@ -15,8 +15,8 @@
         "largo": 70.2,
         "direccion": "Calle Bolivar esq. Sucre",
         "referencias": "frente al parque",
-        "latitud": "10,31.75",
-        "longitud": "104129988",
+        "latitud": "-17.749359834084576",
+        "longitud": "-63.175701028125076",
         "id_usuario": 101
     },
     {
@@ -25,8 +25,8 @@
         "largo": 100.8,
         "direccion": "Av. San Martin 4to anillo",
         "referencias": "al lado del supermercado",
-        "latitud": "10,30.92",
-        "longitud": "104131599",
+        "latitud": "-17.72283996146226",
+        "longitud": "-63.172384971853454",
         "id_usuario": 102
     }
 ]
