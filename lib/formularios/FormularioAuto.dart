@@ -1,18 +1,20 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class FormularioAuto extends StatelessWidget {
-  const FormularioAuto({Key? key});
+  final TextEditingController matriculaController = TextEditingController();
+  final TextEditingController colorController = TextEditingController();
+  final TextEditingController alturaController = TextEditingController();
+  final TextEditingController anchoController = TextEditingController();
+  final TextEditingController largoController = TextEditingController();
+  final TextEditingController modeloController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  FormularioAuto({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final matriculaController = TextEditingController();
-    final colorController = TextEditingController();
-    final alturaController = TextEditingController();
-    final anchoController = TextEditingController();
-    final largoController = TextEditingController();
-    final modeloController = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple.shade200,
@@ -50,7 +52,7 @@ class FormularioAuto extends StatelessWidget {
                   SizedBox(height: 90),
                   _buildButton(Icons.save, "GUARDAR", () {
                     if (formKey.currentState!.validate()) {
-                      // Aquí puedes definir la lógica para guardar los datos del auto
+                      _enviarAuto();
                     }
                   }),
                 ],
@@ -88,5 +90,47 @@ class FormularioAuto extends StatelessWidget {
       icon: Icon(icon),
       label: Text(text),
     );
+  }
+
+  void _enviarAuto() {
+    final matricula = matriculaController.text;
+    final color = colorController.text;
+    final altura = alturaController.text;
+    final ancho = anchoController.text;
+    final largo = largoController.text;
+    final modelo = modeloController.text;
+
+    final autoData = {
+      'matricula': matricula,
+      'color': color,
+      'altura': altura,
+      'ancho': ancho,
+      'largo': largo,
+      'modelo': modelo,
+    };
+
+    final jsonData = jsonEncode(autoData);
+
+    _enviarDatos(jsonData);
+  }
+
+  Future<void> _enviarDatos(String jsonData) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://tu-backend.com/api/agregar_auto'),// cambiar url
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonData,
+      );
+
+      if (response.statusCode == 200) {
+        print('Auto agregado exitosamente');
+      } else {
+        print('Error al agregar el auto: ${response.body}');
+      }
+    } catch (error) {
+      print('Error al agregar el auto: $error');
+    }
   }
 }
