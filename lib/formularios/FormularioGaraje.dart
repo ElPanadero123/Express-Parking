@@ -30,36 +30,7 @@ class FormularioGaraje extends StatelessWidget {
               key: formKey,
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Secciones",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      SizedBox(width: 10),
-                      seccionesGuardadas
-                          ? _buildDropdownButton(context)
-                          : _buildAgregarSeccionButton(context),
-                    ],
-                  ),
                   SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Text(
-                        "Agregar un Nuevo Garaje",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "EMPIEZA A GANAR DINERO",
-                        style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 30),
                   _buildTextField(Icons.aspect_ratio, "Ancho del Garaje (metros)", anchoController),
                   SizedBox(height: 10),
                   _buildTextField(Icons.height, "Largo del Garaje (metros)", largoController),
@@ -69,6 +40,30 @@ class FormularioGaraje extends StatelessWidget {
                   _buildTextField(Icons.location_on, "Dirección del Garaje", direccionController),
                   SizedBox(height: 10),
                   _buildTextField(Icons.description, "Descripción del Garaje", descripcionController),
+                  SizedBox(height: 20),
+                  Row(
+          children:[
+  Center(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Text(
+            "Secciones",
+            style: TextStyle(fontSize: 18),
+          ),
+        ),
+        SizedBox(height: 40.0), // Espacio entre el texto y el DropdownButton
+      ],
+    ),
+  ),
+  seccionesGuardadas
+      ? _buildDropdownButton(context)
+      : _buildAgregarSeccionButton(context),
+],
+
+
+                  ),
                   SizedBox(height: 80),
                   _buildButton(Icons.save, "GUARDAR GARAJE", () {}),
                 ],
@@ -113,32 +108,49 @@ class FormularioGaraje extends StatelessWidget {
     );
   }
 
-  Widget _buildDropdownButton(BuildContext context) {
-    return DropdownButton<String>(
-      items: [
-        DropdownMenuItem<String>(
-          value: 'Sección A',
-          child: Text('Sección A'),
-        ),
-        DropdownMenuItem<String>(
-          value: 'Sección B',
-          child: Text('Sección B'),
-        ),
-        DropdownMenuItem<String>(
-          value: 'Sección C',
-          child: Text('Sección C'),
-        ),
-      ],
-      onChanged: (value) {
-        if (value == "Agregar Sección") {
-          _mostrarFormularioSeccion(context);
-        } else {
-          _mostrarToast(context, "Secciones: $value");
-        }
-      },
-      hint: Text('Seleccionar Sección'),
-    );
-  }
+Widget _buildDropdownButton(BuildContext context) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+  padding: const EdgeInsets.symmetric(vertical: 20),
+  child: Center(
+    child: Text(
+      "Secciones",
+      style: TextStyle(fontSize: 18),
+    ),
+  ),
+),
+
+      DropdownButton<String>(
+        alignment: Alignment.centerLeft, // Alinea el DropdownButton a la izquierda
+        items: [
+          DropdownMenuItem<String>(
+            value: 'Sección A',
+            child: Text('Sección A'),
+          ),
+          DropdownMenuItem<String>(
+            value: 'Sección B',
+            child: Text('Sección B'),
+          ),
+          DropdownMenuItem<String>(
+            value: 'Sección C',
+            child: Text('Sección C'),
+          ),
+        ],
+        onChanged: (value) {
+          if (value == "Agregar Sección") {
+            _mostrarFormularioSeccion(context);
+          } else {
+            _mostrarToast(context, "Secciones: $value");
+          }
+        },
+        hint: Text('Seleccionar Sección'),
+      ),
+    ],
+  );
+}
+
 
   Widget _buildAgregarSeccionButton(BuildContext context) {
     return DropdownButton<String>(
@@ -168,25 +180,22 @@ class FormularioGaraje extends StatelessWidget {
   }
 
   void _mostrarFormularioSeccion(BuildContext context) {
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Agregar Sección'),
-          ),
-          body: SingleChildScrollView( // Agregar SingleChildScrollView
-            child: FormularioSeccion(),
-          ),
-        );
-      },
-    ),
-  );
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Agregar Sección'),
+            ),
+            body: SingleChildScrollView(
+              child: FormularioSeccion(),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
-
-
-}
-
 
 class FormularioSeccion extends StatelessWidget {
   const FormularioSeccion({Key? key});
@@ -388,4 +397,3 @@ class FormularioSeccion extends StatelessWidget {
     );
   }
 }
-

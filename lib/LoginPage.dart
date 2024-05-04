@@ -1,3 +1,5 @@
+import 'dart:convert'; 
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'PantallaPrincipal.dart';
@@ -14,6 +16,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key});
@@ -54,7 +57,7 @@ class LoginPage extends StatelessWidget {
                   const SizedBox(height: 30),
                   _buildTextField(Icons.email, "Correo Electrónico", correoController),
                   const SizedBox(height: 10),
-                  _buildTextField(Icons.password, "Contraseña", passwordController),
+                  _buildPasswordField(Icons.password, "Contraseña", passwordController),
                   const SizedBox(height: 30),
                   _buildButton(Icons.admin_panel_settings_rounded, "INGRESAR", correoController, passwordController, formKey, context),
                   const SizedBox(height: 20),
@@ -102,11 +105,32 @@ class LoginPage extends StatelessWidget {
     );
   }
 
+  Widget _buildPasswordField(IconData icon, String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: TextFormField(
+        controller: controller,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Este campo es obligatorio';
+          }
+          return null;
+        },
+        obscureText: true, // This line makes the password field masked
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
   Widget _buildButton(IconData icon, String text, TextEditingController correoController, TextEditingController passwordController, GlobalKey<FormState> formKey, BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
         if (formKey.currentState!.validate()) {
-          // Intentar iniciar sesión
+          // Attempt to log in
           _iniciarSesion(correoController.text, passwordController.text, context);
         }
       },
@@ -117,16 +141,27 @@ class LoginPage extends StatelessWidget {
 
   Future<void> _iniciarSesion(String correo, String password, BuildContext context) async {
     try {
-      // Aquí debes implementar la lógica para iniciar sesión con el backend
-      // Por ahora, simplemente simularemos un inicio de sesión exitoso si los campos no están vacíos
-      if (correo.isNotEmpty && password.isNotEmpty) {
-        // Iniciar sesión exitoso, navegar a la pantalla principal
+      // Send HTTP request to authenticate the user
+      final response = await http.post(
+        Uri.parse('https://laravelapiparking-production.up.railway.app/api/login'), // Replace with your authentication endpoint URL
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'correo': correo,
+          'password': password,
+        }),
+      );
+
+      // Check backend response
+      if (response.statusCode == 200) {
+        // Successful authentication, navigate to the main screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PantallaPrincipal()),
         );
       } else {
-        // Iniciar sesión fallido, mostrar un mensaje de error
+        // Authentication failed, show an error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Inicio de sesión fallido. Verifique sus credenciales.'),
@@ -134,7 +169,7 @@ class LoginPage extends StatelessWidget {
         );
       }
     } catch (error) {
-      // Error al intentar iniciar sesión
+      // Error sending HTTP request
       print('Error al iniciar sesión: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -283,18 +318,21 @@ class RegistroPage extends StatelessWidget {
     try {
       // Enviar la solicitud HTTP al backend
       final response = await http.post(
-        Uri.parse('URL_DE_TU_ENDPOINT'), // Reemplaza 'URL_DE_TU_ENDPOINT' por la URL de tu endpoint de registro
-        body: userData,
+        Uri.parse('https://laravelapiparking-production.up.railway.app/api/usuarios'), // Reemplaza 'URL_DE_TU_ENDPOINT' por la URL de tu endpoint de registro
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(userData),
       );
 
       // Verificar la respuesta
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         // Registro exitoso
         print('Registro exitoso');
         // Puedes realizar alguna acción adicional, como navegar a la pantalla principal
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PantallaPrincipal()),
+          MaterialPageRoute(builder: (context) => LoginPage()),
         );
       } else {
         // Error en la solicitud
