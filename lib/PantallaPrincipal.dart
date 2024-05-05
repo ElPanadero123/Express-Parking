@@ -1,4 +1,5 @@
 import 'package:express_parking/Listas/OfertasList.dart';
+import 'package:express_parking/Listas/Reservas_globales.dart';
 import 'package:express_parking/Listas/historial.dart';
 import 'package:express_parking/LoginPage.dart';
 import 'package:express_parking/token/token.dart';
@@ -197,6 +198,8 @@ Drawer buildDrawer(BuildContext context) {
                   () => navigateTo(context, OfertasList())),
               buildListTile(Icons.history, 'Historial',
                   () => navigateTo(context, HistorialAccionesExitosas())),
+              buildListTile(Icons.search, 'Buscar',
+                  () => navigateTo(context, Reservasglobales())),
               ListTile(
                 leading: Icon(Icons.exit_to_app, color: Colors.red),
                 title: Text('Cerrar sesión'),
