@@ -9,6 +9,7 @@ class Garaje {
   final double? latitud;
   final double? longitud;
   final int idUsuario;
+  
 
   Garaje({
     required this.id,
@@ -21,12 +22,13 @@ class Garaje {
     this.latitud,
     this.longitud,
     required this.idUsuario,
+  
   });
 
   factory Garaje.fromJson(Map<String, dynamic> json) {
     return Garaje(
-      id: json['id_garaje'] as int,
-      imagenGaraje: json['imagen_garaje'] as String,
+      id: json['id_garaje'],
+      imagenGaraje: json['imagen_garaje'],
       ancho: (json['ancho'] as num).toDouble(),
       largo: (json['largo'] as num).toDouble(),
       direccion: json['direccion'] as String,
@@ -35,6 +37,7 @@ class Garaje {
       latitud: (json['latitud'] as num?)?.toDouble(),
       longitud: (json['longitud'] as num?)?.toDouble(),
       idUsuario: json['id_usuario'] as int,
+      
     );
   }
 }

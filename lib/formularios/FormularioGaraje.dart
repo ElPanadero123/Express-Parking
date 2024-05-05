@@ -1,17 +1,77 @@
-import 'package:express_parking/formularios/CrearOferta.dart';
+import 'dart:convert';
+import 'package:express_parking/formularios/FormularioSeccion.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
-class FormularioGaraje extends StatelessWidget {
-  const FormularioGaraje({Key? key});
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Formulario de Garaje',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: FormularioGaraje(),
+    );
+  }
+}
+
+class FormularioGaraje extends StatefulWidget {
+  const FormularioGaraje({Key? key}) : super(key: key);
+
+  @override
+  _FormularioGarajeState createState() => _FormularioGarajeState();
+}
+
+class _FormularioGarajeState extends State<FormularioGaraje> {
+  final anchoController = TextEditingController();
+  final largoController = TextEditingController();
+  final alturaController = TextEditingController();
+  final direccionController = TextEditingController();
+  final descripcionController = TextEditingController();
+  final seccionController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  List<String> secciones = [];
 
   @override
   Widget build(BuildContext context) {
-    final anchoController = TextEditingController();
-    final largoController = TextEditingController();
-    final alturaController = TextEditingController();
-    final direccionController = TextEditingController();
-    final descripcionController = TextEditingController(); // Nuevo controlador de texto para la descripción
-    final formKey = GlobalKey<FormState>();
+    bool seccionesGuardadas = secciones.isNotEmpty;
+
+    Future<void> _guardarGaraje(BuildContext context) async {
+      if (!formKey.currentState!.validate() || !seccionesGuardadas) {
+        return;
+      }
+
+      final garaje = {
+        'ancho': anchoController.text,
+        'largo': largoController.text,
+        'altura': alturaController.text,
+        'direccion': direccionController.text,
+        'descripcion': descripcionController.text,
+        'secciones': secciones,
+      };
+
+      // Lógica para guardar el garaje aquí
+    }
+
+    void _agregarSeccion(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Agregar Sección"),
+            content: Builder(
+              builder: (context) => FormularioSeccion(),
+            ),
+          );
+        },
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -27,23 +87,7 @@ class FormularioGaraje extends StatelessWidget {
               key: formKey,
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Agregar un Nuevo Garaje",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "EMPIEZA A GANAR DINERO",
-                        style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
                   _buildTextField(Icons.aspect_ratio, "Ancho del Garaje (metros)", anchoController),
                   SizedBox(height: 10),
                   _buildTextField(Icons.height, "Largo del Garaje (metros)", largoController),
@@ -51,19 +95,35 @@ class FormularioGaraje extends StatelessWidget {
                   _buildTextField(Icons.vertical_align_bottom, "Altura del Garaje (metros)", alturaController),
                   SizedBox(height: 10),
                   _buildTextField(Icons.location_on, "Dirección del Garaje", direccionController),
-                  SizedBox(height: 10), // Espacio adicional entre los campos
-                  _buildTextField(Icons.description, "Descripción del Garaje", descripcionController), // Nuevo campo de descripción
-                  SizedBox(height: 80), // Ajusta el espacio según sea necesario
-                  _buildButton(Icons.save, "CREA UNA OFERTA", () {
-                    if (formKey.currentState!.validate()) {
-                      // Aquí puedes definir la lógica para guardar los datos del garaje
-                      
-                      // Después de guardar los datos del garaje, navega a la pantalla CrearOfertaPage
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CrearOfertaPage()),
-                      );
-                    }
+                  SizedBox(height: 10),
+                  _buildTextField(Icons.description, "Descripción del Garaje", descripcionController),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Text(
+                                  "Secciones",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                              SizedBox(height: 10.0),
+                              seccionesGuardadas
+                                  ? _buildDropdownButton()
+                                  : _buildAgregarSeccionButton(context),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 80),
+                  _buildButton(Icons.save, "GUARDAR GARAJE", () {
+                    _guardarGaraje(context);
                   }),
                 ],
               ),
@@ -74,37 +134,101 @@ class FormularioGaraje extends StatelessWidget {
     );
   }
 
-Widget _buildTextField(IconData icon, String label, TextEditingController controller) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: SizedBox(
-      height: 100, // Altura máxima del campo de descripción antes de expandirse hacia abajo
-      child: TextFormField(
-        controller: controller,
-        maxLines: null, // Permite que el campo de texto tenga múltiples líneas
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Este campo es obligatorio';
-          }
-          return null;
-        },
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon),
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.symmetric(vertical: 10), // Espaciado interno vertical para el campo de texto
+  Widget _buildTextField(IconData icon, String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SizedBox(
+        height: 100,
+        child: TextFormField(
+          controller: controller,
+          maxLines: null,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Este campo es obligatorio';
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: label,
+            prefixIcon: Icon(icon),
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(vertical: 10),
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-
-  Widget _buildButton(IconData icon, String text, void Function() onTap) {
+  Widget _buildButton(IconData icon, String text, void Function()? onTap) {
     return ElevatedButton.icon(
       onPressed: onTap,
       icon: Icon(icon),
       label: Text(text),
+    );
+  }
+
+  Widget _buildDropdownButton() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Center(
+            child: Text(
+              "Secciones",
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+        ),
+        DropdownButton<String>(
+          alignment: Alignment.centerLeft,
+          items: secciones
+              .map((seccion) => DropdownMenuItem<String>(
+                    value: seccion,
+                    child: Text(seccion),
+                  ))
+              .toList(),
+          onChanged: (value) {
+            // Puedes implementar lógica adicional aquí
+          },
+          hint: Text('Seleccionar Sección'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAgregarSeccionButton(BuildContext context) {
+    return DropdownButton<String>(
+      items: [
+        DropdownMenuItem<String>(
+          value: 'Agregar Sección',
+          child: Text('Agregar Sección'),
+        ),
+      ],
+      onChanged: (String? value) {
+        if (value != null && value == "Agregar Sección") {
+          // Navega a la pantalla FormularioSeccion
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FormularioSeccion()),
+          );
+        }
+      },
+      hint: Text('Seleccionar Sección'),
+    );
+  }
+}
+
+class ParkingList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Lista de Garajes"),
+      ),
+      body: Center(
+        child: Text("Aquí va la lista de garajes"),
+      ),
     );
   }
 }
