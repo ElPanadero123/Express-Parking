@@ -1,4 +1,5 @@
 import 'package:express_parking/Listas/OfertasList.dart';
+import 'package:express_parking/Listas/historial.dart';
 import 'package:express_parking/LoginPage.dart';
 import 'package:express_parking/token/token.dart';
 import 'package:flutter/material.dart';
@@ -195,7 +196,7 @@ Drawer buildDrawer(BuildContext context) {
               buildListTile(Icons.campaign, 'Creación de Oferta',
                   () => navigateTo(context, OfertasList())),
               buildListTile(Icons.history, 'Historial',
-                  () => navigateTo(context, HistorialParqueadas())),
+                  () => navigateTo(context, HistorialAccionesExitosas())),
               ListTile(
                 leading: Icon(Icons.exit_to_app, color: Colors.red),
                 title: Text('Cerrar sesión'),
