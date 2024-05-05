@@ -1,40 +1,40 @@
-import 'dart:convert';
+class Garaje {
+  final int id;
+  final String imagenGaraje;
+  final double ancho;
+  final double largo;
+  final String direccion;
+  final String notas;
+  final String referencias;
+  final double? latitud;
+  final double? longitud;
+  final int idUsuario;
 
-import 'package:flutter/services.dart';
-
-class ParqueosDataModel {
-  int? id;
-  double? ancho;
-  double? largo;
-  String? direccion;
-  String? referencias;
-  double? latitud; // Cambiado de String? a double?
-  double? longitud; // Cambiado de String? a double?
-  int? idUsuario;
-
-  ParqueosDataModel({
-    this.id,
-    this.ancho,
-    this.largo,
-    this.direccion,
-    this.referencias,
+  Garaje({
+    required this.id,
+    required this.imagenGaraje,
+    required this.ancho,
+    required this.largo,
+    required this.direccion,
+    required this.notas,
+    required this.referencias,
     this.latitud,
     this.longitud,
-    this.idUsuario,
+    required this.idUsuario,
   });
 
-  factory ParqueosDataModel.fromJson(Map<String, dynamic> json) {
-    return ParqueosDataModel(
-      id: json['id'],
-      ancho: json['ancho']?.toDouble(),
-      largo: json['largo']?.toDouble(),
-      direccion: json['direccion'],
-      referencias: json['referencias'],
-      latitud:
-          json['latitud'] != null ? double.tryParse(json['latitud']) : null,
-      longitud:
-          json['longitud'] != null ? double.tryParse(json['longitud']) : null,
-      idUsuario: json['id_usuario'],
+  factory Garaje.fromJson(Map<String, dynamic> json) {
+    return Garaje(
+      id: json['id_garaje'] as int,
+      imagenGaraje: json['imagen_garaje'] as String,
+      ancho: (json['ancho'] as num).toDouble(),
+      largo: (json['largo'] as num).toDouble(),
+      direccion: json['direccion'] as String,
+      notas: json['notas'] as String,
+      referencias: json['referencias'] as String,
+      latitud: (json['latitud'] as num?)?.toDouble(),
+      longitud: (json['longitud'] as num?)?.toDouble(),
+      idUsuario: json['id_usuario'] as int,
     );
   }
 }

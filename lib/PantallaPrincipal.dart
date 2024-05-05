@@ -185,7 +185,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal>
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => parkingList()));
+                    MaterialPageRoute(builder: (context) => ParkingList()));
               },
             ),
             ListTile(

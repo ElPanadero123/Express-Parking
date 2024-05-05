@@ -1,43 +1,52 @@
 import 'dart:convert';
-
+import 'package:express_parking/fakeTaxi/ParqueosDataModel.dart';
+import 'package:express_parking/token/token.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'package:express_parking/formularios/FormularioGaraje.dart';
 import 'package:express_parking/Listas/GarajeInfo.dart';
-import 'package:express_parking/fakeTaxi/ParqueosDataModel.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' as rootBundle;
 
-class parkingList extends StatefulWidget {
+class ParkingList extends StatefulWidget {
+  ParkingList({Key? key}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() {
-    return new parkingListState();
-  }
+  State<ParkingList> createState() => ParkingListState();
 }
 
-class parkingListState extends State<parkingList> {
+class ParkingListState extends State<ParkingList> {
+  Future<List<Garaje>> fetchGarajes() async {
+    final url = Uri.parse('http://tu-api-url.com/garajes');
+    final response = await http.get(url, headers: {
+      'Authorization': 'Bearer ${GlobalToken.userToken}',
+    });
+
+    if (response.statusCode == 200) {
+      final List<dynamic> garajesJson = json.decode(response.body);
+      return garajesJson.map((json) => Garaje.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load garages from API');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: ReadJsonData(),
-        builder: (context, data) {
-          if (data.hasError) {
-            //in case if error found
-            return Center(child: Text("${data.error}"));
-          } else if (data.hasData) {
-            //once data is ready this else block will execute
-            // items will hold all the data of DataModel
-            //items[index].name can be used to fetch name of product as done below
-            var items = data.data as List<ParqueosDataModel>;
+      body: FutureBuilder<List<Garaje>>(
+        future: fetchGarajes(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (snapshot.hasData) {
             return ListView.builder(
-              itemCount: items == null ? 0 : items.length,
+              itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
+                final garaje = snapshot.data![index];
                 return GestureDetector(
                   onTap: () {
-                    // Navegar a Garajeinfo al hacer clic en el elemento de la lista
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => GarajeInfo(data: items[index]),
+                        builder: (context) => GarajeInfo(data: garaje),
                       ),
                     );
                   },
@@ -60,7 +69,7 @@ class parkingListState extends State<parkingList> {
                                   Padding(
                                     padding: EdgeInsets.only(left: 8, right: 8),
                                     child: Text(
-                                      items[index].direccion.toString(),
+                                      garaje.direccion,
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -69,9 +78,7 @@ class parkingListState extends State<parkingList> {
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(left: 8, right: 8),
-                                    child: Text(
-                                      items[index].referencias.toString(),
-                                    ),
+                                    child: Text(garaje.referencias),
                                   )
                                 ],
                               ),
@@ -85,31 +92,20 @@ class parkingListState extends State<parkingList> {
               },
             );
           } else {
-            // Muestra un círculo de progreso mientras se obtienen los datos del archivo JSON
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navegar a la pantalla de creación de nuevo vehículo
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => FormularioGaraje()),
           );
         },
-        tooltip: 'Crear nuevo garaje',
         child: Icon(Icons.add),
+        tooltip: 'Crear nuevo garaje',
       ),
     );
   }
-}
-
-Future<List<ParqueosDataModel>> ReadJsonData() async {
-  final jsondata = await rootBundle.rootBundle.loadString('json/parqueos.json');
-  final list = json.decode(jsondata) as List<dynamic>;
-
-  return list.map((e) => ParqueosDataModel.fromJson(e)).toList();
 }
