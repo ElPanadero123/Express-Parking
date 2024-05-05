@@ -307,7 +307,7 @@ class RegistroPage extends StatelessWidget {
         }),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Registro exitoso')),
         );
