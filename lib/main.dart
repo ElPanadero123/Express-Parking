@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
+import 'PantallaPrincipal.dart';
+import 'package:express_parking/token/token.dart'; // Asegúrate de que el path sea correcto
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Asegura que tienes acceso a instancias vinculadas al framework antes de runApp
+  await GlobalToken
+      .initialize(); // Asegúrate de que el método initialize está correctamente definido en GlobalToken
   runApp(const MyApp());
 }
 
@@ -23,21 +29,24 @@ class MyApp extends StatelessWidget {
 }
 
 class Splash_Screen extends StatelessWidget {
-  const Splash_Screen({Key? key});
+  const Splash_Screen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => LoginPage(),
-        ),
-      );
+    Future.delayed(const Duration(seconds: 3), () {
+      // Comprobar si ya existe un token y decidir qué página cargar
+      if (GlobalToken.userToken != null && GlobalToken.userToken!.isNotEmpty) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const PantallaPrincipal()));
+      } else {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LoginPage()));
+      }
     });
 
     return const Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -46,8 +55,8 @@ class Splash_Screen extends StatelessWidget {
               flex: 9,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                    Text(
+                children: const [
+                  Text(
                     "BIENVENIDO A EXPRESS PARKING",
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -55,16 +64,14 @@ class Splash_Screen extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                 ],
               ),
             ),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  
-                ],
+                children: [],
               ),
             ),
           ],

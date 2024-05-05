@@ -1,4 +1,5 @@
 import 'package:express_parking/LoginPage.dart';
+import 'package:express_parking/token/token.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -220,14 +221,16 @@ class _PantallaPrincipalState extends State<PantallaPrincipal>
               leading: Icon(Icons.exit_to_app, color: Colors.red),
               title: Text('Cerrar sesión'),
               onTap: () {
-                // Aquí debes implementar la lógica de cierre de sesión
-                // Por ejemplo, borrar datos de usuario, etc.
+                // Borrar el token de usuario
+                GlobalToken.userToken =
+                    null; // Esto también borra el token de SharedPreferences debido a la implementación del setter en GlobalToken
+                // Limpiar todas las rutas anteriores y llevar al usuario al LoginPage
                 Navigator.of(context).popUntil((route) => route.isFirst);
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) =>
-                        const LoginPage())); 
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
               },
             ),
+
           ],
         ),
       ),
