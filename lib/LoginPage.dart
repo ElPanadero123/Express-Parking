@@ -1,25 +1,12 @@
 import 'dart:convert'; 
 
+import 'package:express_parking/token/token.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'PantallaPrincipal.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LoginPage(),
-    );
-  }
-}
-
-
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key});
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +17,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple.shade200,
-        title: Text(" INICIA SESION "),
+        title: const Text("INICIA SESIÓN"),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -43,36 +30,40 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 20),
-                  Text(
-                    "Bienvenido de Nuevo",
-                    style: TextStyle(fontSize: 15),
-                    textAlign: TextAlign.center,
-                  ),
+                  const Text("Bienvenido de Nuevo",
+                      style: TextStyle(fontSize: 15),
+                      textAlign: TextAlign.center),
                   const SizedBox(height: 10),
-                  Text(
-                    "LOGIN",
-                    style: TextStyle(fontSize: 45, fontWeight: FontWeight.w700),
-                    textAlign: TextAlign.center,
-                  ),
+                  const Text("LOGIN",
+                      style:
+                          TextStyle(fontSize: 45, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center),
                   const SizedBox(height: 30),
-                  _buildTextField(Icons.email, "Correo Electrónico", correoController),
+                  _buildTextField(
+                      Icons.email, "Correo Electrónico", correoController),
                   const SizedBox(height: 10),
-                  _buildPasswordField(Icons.password, "Contraseña", passwordController),
+                  _buildPasswordField(
+                      Icons.lock, "Contraseña", passwordController),
                   const SizedBox(height: 30),
-                  _buildButton(Icons.admin_panel_settings_rounded, "INGRESAR", correoController, passwordController, formKey, context),
+                  _buildButton(Icons.login, "INGRESAR", () {
+                    if (formKey.currentState!.validate()) {
+                      _iniciarSesion(correoController.text,
+                          passwordController.text, context);
+                    }
+                  }),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("¿No tienes una cuenta?"),
+                      const Text("¿No tienes una cuenta?"),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => RegistroPage()),
-                          );
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const RegistroPage()));
                         },
-                        child: Text("Ingresa aquí"),
+                        child: const Text("Regístrate aquí"),
                       ),
                     ],
                   ),
@@ -85,65 +76,63 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField(IconData icon, String label, TextEditingController controller) {
+  Widget _buildTextField(
+      IconData icon, String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: TextFormField(
         controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: const OutlineInputBorder(),
+        ),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Este campo es obligatorio';
           }
           return null;
         },
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon),
-          border: OutlineInputBorder(),
-        ),
       ),
     );
   }
 
-  Widget _buildPasswordField(IconData icon, String label, TextEditingController controller) {
+  Widget _buildPasswordField(
+      IconData icon, String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: TextFormField(
         controller: controller,
+        obscureText: true,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: const OutlineInputBorder(),
+        ),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Este campo es obligatorio';
           }
           return null;
         },
-        obscureText: true, // This line makes the password field masked
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon),
-          border: OutlineInputBorder(),
-        ),
       ),
     );
   }
 
-  Widget _buildButton(IconData icon, String text, TextEditingController correoController, TextEditingController passwordController, GlobalKey<FormState> formKey, BuildContext context) {
+  Widget _buildButton(IconData icon, String text, VoidCallback onPressed) {
     return ElevatedButton.icon(
-      onPressed: () {
-        if (formKey.currentState!.validate()) {
-          // Attempt to log in
-          _iniciarSesion(correoController.text, passwordController.text, context);
-        }
-      },
+      onPressed: onPressed,
       icon: Icon(icon),
       label: Text(text),
     );
   }
 
-  Future<void> _iniciarSesion(String correo, String password, BuildContext context) async {
+  Future<void> _iniciarSesion(
+      String correo, String password, BuildContext context) async {
     try {
-      // Send HTTP request to authenticate the user
       final response = await http.post(
-        Uri.parse('https://laravelapiparking-production.up.railway.app/api/login'), // Replace with your authentication endpoint URL
+        Uri.parse(
+            'https://laravelapiparking-production.up.railway.app/api/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -153,35 +142,27 @@ class LoginPage extends StatelessWidget {
         }),
       );
 
-      // Check backend response
       if (response.statusCode == 200) {
-        // Successful authentication, navigate to the main screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => PantallaPrincipal()),
-        );
+        final String token = json.decode(response.body)['token'];
+        GlobalToken.userToken = token;
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const PantallaPrincipal()));
       } else {
-        // Authentication failed, show an error message
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Inicio de sesión fallido. Verifique sus credenciales.'),
-          ),
+          const SnackBar(
+              content: Text(
+                  'Inicio de sesión fallido. Verifique sus credenciales.')),
         );
       }
-    } catch (error) {
-      // Error sending HTTP request
-      print('Error al iniciar sesión: $error');
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al iniciar sesión: $error'),
-        ),
+        SnackBar(content: Text('Error al iniciar sesión: $e')),
       );
     }
   }
 }
-
 class RegistroPage extends StatelessWidget {
-  const RegistroPage({Key? key});
+  const RegistroPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -197,16 +178,14 @@ class RegistroPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple.shade200,
-        title: Text(" REGISTRATE AQUI "),
+        title: const Text("REGÍSTRATE AQUÍ"),
         centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
-              icon: Icon(Icons.person),
+              icon: const Icon(Icons.person),
               onPressed: () {
-                // Aquí puedes implementar la lógica para seleccionar una imagen de perfil
-                // Por ahora, simplemente imprimiremos un mensaje
                 print('Seleccionar imagen de perfil');
               },
             ),
@@ -223,17 +202,14 @@ class RegistroPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 20),
-                  Text(
-                    "Bienvenido",
-                    style: TextStyle(fontSize: 15),
-                    textAlign: TextAlign.center,
-                  ),
+                  const Text("Bienvenido",
+                      style: TextStyle(fontSize: 15),
+                      textAlign: TextAlign.center),
                   const SizedBox(height: 10),
-                  Text(
-                    "REGISTRO",
-                    style: TextStyle(fontSize: 45, fontWeight: FontWeight.w700),
-                    textAlign: TextAlign.center,
-                  ),
+                  const Text("REGISTRO",
+                      style:
+                          TextStyle(fontSize: 45, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center),
                   const SizedBox(height: 30),
                   _buildTextField(Icons.person, "Nombre", nombreController),
                   const SizedBox(height: 10),
@@ -241,15 +217,30 @@ class RegistroPage extends StatelessWidget {
                   const SizedBox(height: 10),
                   _buildTextField(Icons.credit_card, "CI", ciController),
                   const SizedBox(height: 10),
-                  _buildTextField(Icons.email, "Correo Electrónico", correoController),
+                  _buildTextField(
+                      Icons.email, "Correo Electrónico", correoController),
                   const SizedBox(height: 10),
                   _buildTextField(Icons.phone, "Teléfono", telefonoController),
                   const SizedBox(height: 10),
                   _buildTextField(Icons.lock, "Contraseña", passwordController),
                   const SizedBox(height: 10),
-                  _buildTextField(Icons.image, "Imagen de Perfil", imagenPerfilController, isRequired: false),
+                  _buildTextField(
+                      Icons.image, "Imagen de Perfil", imagenPerfilController,
+                      isRequired: false),
                   const SizedBox(height: 30),
-                  _buildButton(Icons.app_registration, "REGISTRARSE", context, formKey, nombreController, apellidoController, ciController, correoController, telefonoController, passwordController, imagenPerfilController),
+                  _buildButton(Icons.app_registration, "REGISTRARSE", () {
+                    if (formKey.currentState!.validate()) {
+                      _registrar(
+                          nombreController.text,
+                          apellidoController.text,
+                          ciController.text,
+                          correoController.text,
+                          telefonoController.text,
+                          passwordController.text,
+                          imagenPerfilController.text,
+                          context);
+                    }
+                  }),
                 ],
               ),
             ),
@@ -259,7 +250,9 @@ class RegistroPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField(IconData icon, String label, TextEditingController controller, {bool isRequired = true}) {
+  Widget _buildTextField(
+      IconData icon, String label, TextEditingController controller,
+      {bool isRequired = true}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: TextFormField(
@@ -268,90 +261,66 @@ class RegistroPage extends StatelessWidget {
           if (isRequired && (value == null || value.isEmpty)) {
             return 'Este campo es obligatorio';
           }
-          // Validación adicional para los campos de CI y Teléfono
-          if (label == 'CI' && (value != null && value.isNotEmpty && int.tryParse(value) == null)) {
-            return 'Ingrese un valor numérico válido';
-          }
-          if (label == 'Teléfono' && (value != null && value.isNotEmpty && int.tryParse(value) == null)) {
-            return 'Ingrese un número de teléfono válido';
-          }
           return null;
         },
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon),
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
       ),
     );
   }
 
-  Widget _buildButton(IconData icon, String text, BuildContext context, GlobalKey<FormState> formKey, TextEditingController nombreController, TextEditingController apellidoController, TextEditingController ciController, TextEditingController correoController, TextEditingController telefonoController, TextEditingController passwordController, TextEditingController imagenPerfilController) {
+  Widget _buildButton(IconData icon, String text, VoidCallback onPressed) {
     return ElevatedButton.icon(
-      onPressed: () {
-        if (formKey.currentState!.validate()) {
-          // Realizar la conversión adecuada para los campos numéricos (CI y teléfono)
-          final int ci = int.tryParse(ciController.text) ?? 0;
-          final int telefono = int.tryParse(telefonoController.text) ?? 0;
-
-          // Crear el objeto de datos del usuario
-          final userData = {
-            'nombre': nombreController.text,
-            'apellido': apellidoController.text,
-            'ci': ci,
-            'correo': correoController.text,
-            'telefono': telefono,
-            'password': passwordController.text,
-            'imagenPerfil': imagenPerfilController.text, // Puedes usar la URL de la imagen o dejarla como un campo vacío si no se selecciona ninguna imagen
-          };
-
-          // Enviar los datos del registro al backend en formato JSON
-          enviarRegistroABackend(userData, context);
-        }
-      },
+      onPressed: onPressed,
       icon: Icon(icon),
       label: Text(text),
     );
   }
 
-  Future<void> enviarRegistroABackend(Map<String, dynamic> userData, BuildContext context) async {
+  Future<void> _registrar(
+      String nombre,
+      String apellido,
+      String ci,
+      String correo,
+      String telefono,
+      String password,
+      String imagenPerfil,
+      BuildContext context) async {
     try {
-      // Enviar la solicitud HTTP al backend
       final response = await http.post(
-        Uri.parse('https://laravelapiparking-production.up.railway.app/api/usuarios'), // Reemplaza 'URL_DE_TU_ENDPOINT' por la URL de tu endpoint de registro
+        Uri.parse(
+            'https://laravelapiparking-production.up.railway.app/api/usuarios'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(userData),
+        body: jsonEncode({
+          'nombre': nombre,
+          'apellido': apellido,
+          'ci': ci,
+          'correo': correo,
+          'telefono': telefono,
+          'password': password,
+          'imagenPerfil': imagenPerfil
+        }),
       );
 
-      // Verificar la respuesta
       if (response.statusCode == 201) {
-        // Registro exitoso
-        print('Registro exitoso');
-        // Puedes realizar alguna acción adicional, como navegar a la pantalla principal
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
-      } else {
-        // Error en la solicitud
-        print('Error en el registro: ${response.body}');
-        // Puedes mostrar un mensaje de error al usuario
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error en el registro: ${response.body}'),
-          ),
+          SnackBar(content: Text('Registro exitoso')),
+        );
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const LoginPage()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error en el registro: ${response.body}')),
         );
       }
-    } catch (error) {
-      // Error al enviar la solicitud
-      print('Error al enviar datos al backend: $error');
-      // Puedes mostrar un mensaje de error al usuario
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al enviar datos al backend: $error'),
-        ),
+        SnackBar(content: Text('Error al enviar datos al backend: $e')),
       );
     }
   }

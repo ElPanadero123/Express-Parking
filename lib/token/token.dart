@@ -1,11 +1,16 @@
 class GlobalToken {
-  static String userToken = '';
+  static final GlobalToken _instance = GlobalToken._internal();
+  String _userToken = '';
 
-  static setToken(String token) {
-    userToken = token;
+  factory GlobalToken() {
+    return _instance;
   }
 
-  static String getToken() {
-    return userToken;
+  GlobalToken._internal();
+
+  static String get userToken => _instance._userToken;
+
+  static set userToken(String token) {
+    _instance._userToken = token;
   }
 }

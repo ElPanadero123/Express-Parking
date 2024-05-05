@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'package:express_parking/fakeTaxi/ParqueosDataModel.dart';
+import 'package:express_parking/token/token.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:flutter/material.dart';
 import 'package:express_parking/formularios/FormularioGaraje.dart';
 import 'package:express_parking/Listas/GarajeInfo.dart';
-import 'package:flutter/material.dart';
 
 class ParkingList extends StatefulWidget {
-  final String userToken;
-
-  ParkingList({Key? key, required this.userToken}) : super(key: key);
+  ParkingList({Key? key}) : super(key: key);
 
   @override
   State<ParkingList> createState() => ParkingListState();
@@ -19,7 +17,7 @@ class ParkingListState extends State<ParkingList> {
   Future<List<Garaje>> fetchGarajes() async {
     final url = Uri.parse('http://tu-api-url.com/garajes');
     final response = await http.get(url, headers: {
-      'Authorization': 'Bearer ${widget.userToken}',
+      'Authorization': 'Bearer ${GlobalToken.userToken}',
     });
 
     if (response.statusCode == 200) {
