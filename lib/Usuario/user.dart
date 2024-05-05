@@ -1,6 +1,47 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class UserProfileScreen extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:express_parking/token/token.dart';
+
+class UserProfileScreen extends StatefulWidget {
+  @override
+  _UserProfileScreenState createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
+  late String _username;
+  late String _email;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserData();
+  }
+
+  Future<void> _initializeUserData() async {
+    final response = await http.get(
+      Uri.parse('https://laravelapiparking-production.up.railway.app/api/showUser'),
+      headers: <String, String>{
+        'Authorization': 'Bearer ${GlobalToken.userToken}',
+      },
+    );
+    print('Body: ${response.body}');
+    if (response.statusCode == 200) {
+      final userData = jsonDecode(response.body);
+  final usuarioData = userData['usuario'];
+  setState(() {
+    _username = usuarioData['nombre'];
+    _email = usuarioData['correo'];
+
+      });
+    } else {
+      print('Error al obtener los datos del usuario: ${response.statusCode}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,46 +52,42 @@ class UserProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User Profile Section
-            ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage('URL de la foto de perfil'),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.grey,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    _username ?? 'Cargando...',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    _email ?? 'Cargando...',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
               ),
-              title: Text('Nombre del Usuario'),
-              subtitle: Text('Correo electrónico'),
-              trailing: IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () {
-                  // Lógica para editar el perfil
-                },
-              ),
             ),
-            // Account Settings Section
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configuración de la cuenta'),
-              onTap: () {
-                // Navegar a la pantalla de configuración de la cuenta
-              },
-            ),
-            // Activity History Section
-            ListTile(
-              leading: Icon(Icons.history),
-              title: Text('Historial de actividad'),
-              onTap: () {
-                // Navegar a la pantalla de historial de actividad
-              },
-            ),
-            // Search Functionality Section
-            ListTile(
-              leading: Icon(Icons.search),
-              title: Text('Buscar'),
-              onTap: () {
-                // Navegar a la pantalla de búsqueda
-              },
-            ),
+            Divider(),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Lógica para editar el perfil
+        },
+        child: Icon(Icons.edit),
       ),
     );
   }
