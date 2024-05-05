@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:express_parking/Listas/VehiculoInfo.dart';
 import 'package:express_parking/formularios/FormularioAuto.dart';
 import 'package:express_parking/formularios/FormularioGaraje.dart';
 import 'package:express_parking/fakeTaxi/ParqueosDataModel.dart';
@@ -32,7 +33,18 @@ class VehiculosListState extends State<VehiculosList> {
             return ListView.builder(
                 itemCount: items == null ? 0 : items.length,
                 itemBuilder: (context, index) {
-                  return Card(
+                  return GestureDetector(
+                    onTap: () {
+                      // Navegar a la pantalla deseada cuando se toca la tarjeta
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VehiculoInfo(),
+                        ),
+                      );
+                    },
+                  
+                  child: Card(
                     elevation: 5,
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     child: Container(
@@ -67,7 +79,7 @@ class VehiculosListState extends State<VehiculosList> {
                         ],
                       ),
                     ),
-                  );
+                  ));
                 });
           } else {
             // show circular progress while data is getting fetched from json file
