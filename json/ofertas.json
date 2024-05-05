@@ -1,0 +1,10 @@
+[
+    {
+    "direccion" : "Av Piray 6to anillo",
+    "hora_inicio": "09:00",
+    "hora_final": "18:00",
+    "precio_estimado": 20.50,
+    "fecha": "2024-05-03",
+    "estado": "activo"
+  }
+]
