@@ -18,8 +18,7 @@ class PantallaPrincipal extends StatefulWidget {
   _PantallaPrincipalState createState() => _PantallaPrincipalState();
 }
 
-class _PantallaPrincipalState extends State<PantallaPrincipal>
-    with WidgetsBindingObserver {
+class _PantallaPrincipalState extends State<PantallaPrincipal> with WidgetsBindingObserver {
   late GoogleMapController mapController;
   late MarkerManager markerManager;
   Set<Marker> markers = {};
@@ -91,11 +90,10 @@ class _PantallaPrincipalState extends State<PantallaPrincipal>
       CameraPosition(
         target: LatLng(position.latitude, position.longitude),
         zoom: 14,
-        bearing: 0, 
+        bearing: 0,
       ),
     ));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -147,93 +145,85 @@ class _PantallaPrincipalState extends State<PantallaPrincipal>
     );
   }
 
-  Widget buildDrawer(BuildContext context) {
+Drawer buildDrawer(BuildContext context) {
     return Drawer(
-      child: MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        child: ListView(
-          children: <Widget>[
-            SizedBox(height: 20),
-            UserAccountsDrawerHeader(
-              accountName: const Text("JOSE ALEM RODRIGUEZ VALVERDE"),
-              accountEmail: const Text("josealem03@gmail.com"),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.grey[700],
-                child: const Align(
-                  alignment: Alignment(0, 0.3),
-                  child: Icon(Icons.person, size: 50.0, color: Colors.white),
+      child: SingleChildScrollView(
+        child: Container(
+          color: Colors
+              .white,
+              height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: <Widget>[
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.grey[800],
+                        child: const Icon(Icons.person,
+                            size: 50.0, color: Colors.white),
+                      ),
+                      const SizedBox(height: 10),
+                      Text("JOSE ALEM RODRIGUEZ VALVERDE",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                      Text("josealem03@gmail.com",
+                          style: TextStyle(color: Colors.white)),
+                    ],
+                  ),
                 ),
               ),
-              decoration: const BoxDecoration(
-                color:  Color.fromARGB(255, 147, 83, 250),
+              buildListTile(Icons.account_circle, 'Mi cuenta',
+                  () => navigateTo(context, UserProfileScreen())),
+              buildListTile(Icons.garage, 'Registro de Garaje',
+                  () => navigateTo(context, ParkingList())),
+              buildListTile(Icons.directions_car, 'Registro de Vehículo',
+                  () => navigateTo(context, VehiculosList())),
+              buildListTile(Icons.campaign, 'Creación de Oferta',
+                  () => navigateTo(context, CrearOfertaPage())),
+              buildListTile(Icons.history, 'Historial',
+                  () => navigateTo(context, HistorialParqueadas())),
+              ListTile(
+                leading: Icon(Icons.exit_to_app, color: Colors.red),
+                title: Text('Cerrar sesión'),
+                onTap: () {
+                  GlobalToken.userToken = null;
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const LoginPage()));
+                },
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.account_circle, color: Colors.grey[600]),
-              title: const Text('Mi cuenta'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => UserProfileScreen()));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.garage, color: Colors.grey[600]),
-              title: const Text('Registro de Garaje'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ParkingList()));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_car, color: Colors.grey[600]),
-              title: const Text('Registro de Vehículo'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => VehiculosList()));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.campaign, color: Colors.grey[600]),
-              title: Text('Creación de Oferta'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => CrearOfertaPage()));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.history, color: Colors.grey[600]),
-              title: Text('Historial'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HistorialParqueadas()));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app, color: Colors.red),
-              title: Text('Cerrar sesión'),
-              onTap: () {
-                // Borrar el token de usuario
-                GlobalToken.userToken =
-                    null; // Esto también borra el token de SharedPreferences debido a la implementación del setter en GlobalToken
-                // Limpiar todas las rutas anteriores y llevar al usuario al LoginPage
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const LoginPage()));
-              },
-            ),
-
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  ListTile buildListTile(IconData icon, String title, Function onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.deepPurple),
+      title: Text(title),
+      onTap: () {
+        Navigator.pop(context);
+        onTap();
+      },
+    );
+  }
+
+  void navigateTo(BuildContext context, Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 }
