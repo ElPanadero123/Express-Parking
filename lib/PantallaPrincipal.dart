@@ -1,3 +1,4 @@
+import 'package:express_parking/Listas/OfertasList.dart';
 import 'package:express_parking/LoginPage.dart';
 import 'package:express_parking/token/token.dart';
 import 'package:flutter/material.dart';
@@ -192,7 +193,7 @@ Drawer buildDrawer(BuildContext context) {
               buildListTile(Icons.directions_car, 'Lista de Vehículo',
                   () => navigateTo(context, VehiculosList())),
               buildListTile(Icons.campaign, 'Creación de Oferta',
-                  () => navigateTo(context, CrearOfertaPage())),
+                  () => navigateTo(context, OfertasList())),
               buildListTile(Icons.history, 'Historial',
                   () => navigateTo(context, HistorialParqueadas())),
               ListTile(
