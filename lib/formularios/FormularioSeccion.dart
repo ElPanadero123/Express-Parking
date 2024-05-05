@@ -1,213 +1,139 @@
 import 'package:flutter/material.dart';
+import 'package:express_parking/fakeTaxi/ParqueosDataModel.dart';
 
-void main() {
-  runApp(MaterialApp(
-    home: Scaffold(
-      appBar: AppBar(
-        title: Text('formulario seccion'),
-      ),
-      body: FormularioSeccion(),
-    ),
-  ));
+class FormularioSeccion extends StatefulWidget {
+  final void Function(Seccion) onAdd;
+
+  const FormularioSeccion({Key? key, required this.onAdd}) : super(key: key);
+
+  @override
+  _FormularioSeccionState createState() => _FormularioSeccionState();
 }
 
-class FormularioSeccion extends StatelessWidget {
+class _FormularioSeccionState extends State<FormularioSeccion> {
   final TextEditingController imagenSeccionController = TextEditingController();
   final TextEditingController anchoController = TextEditingController();
   final TextEditingController largoController = TextEditingController();
+  final TextEditingController alturaController = TextEditingController();
   final TextEditingController horaInicioController = TextEditingController();
   final TextEditingController horaFinalController = TextEditingController();
-  final TextEditingController alturaController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  FormularioSeccion({Key? key}) : super(key: key);
+  void _guardarSeccion() {
+    if (formKey.currentState!.validate()) {
+      Seccion newSection = Seccion(
+        idSeccion: DateTime.now().millisecondsSinceEpoch,
+        imagenSeccion: imagenSeccionController.text,
+        ancho: double.parse(anchoController.text),
+        largo: double.parse(largoController.text),
+        altura: double.parse(alturaController.text),
+        estado: "disponible", // Estado por defecto
+        horaInicio: horaInicioController.text,
+        horaFinal: horaFinalController.text,
+      );
+      widget.onAdd(newSection);
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Imagen de la Sección:',
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: imagenSeccionController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Este campo es obligatorio';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Ingrese la URL de la Imagen',
-                    prefixIcon: Icon(Icons.image),
-                    border: OutlineInputBorder(),
+    return Scaffold(
+      appBar: AppBar(title: Text("Agregar Nueva Sección")),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              _buildTextField(imagenSeccionController,
+                  "URL de la imagen de la sección", Icons.image),
+              _buildNumericField(
+                  anchoController, "Ancho (m)", Icons.square_foot),
+              _buildNumericField(
+                  largoController, "Largo (m)", Icons.square_foot),
+              _buildNumericField(alturaController, "Altura (m)", Icons.height),
+              _buildTimePicker(horaInicioController, "Hora de inicio"),
+              _buildTimePicker(horaFinalController, "Hora de fin"),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _guardarSeccion,
+                child: Text('Guardar Sección'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Colors.deepPurple, // Un color de fondo atractivo
+                  foregroundColor: Colors.white, // Color del texto
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  textStyle: TextStyle(fontSize: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-              ],
-            ),
+              )
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Ancho (metros):',
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: anchoController,
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Este campo es obligatorio';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Ingrese el Ancho',
-                    prefixIcon: Icon(Icons.aspect_ratio),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Largo (metros):',
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: largoController,
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Este campo es obligatorio';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Ingrese el Largo',
-                    prefixIcon: Icon(Icons.height),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Altura (metros):',
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: alturaController,
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Este campo es obligatorio';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Ingrese la Altura',
-                    prefixIcon: Icon(Icons.vertical_align_bottom),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Hora de Inicio:',
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () async {
-                    final TimeOfDay? pickedTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (pickedTime != null) {
-                      horaInicioController.text = pickedTime.format(context);
-                    }
-                  },
-                  child: Text(
-                    horaInicioController.text.isNotEmpty ? horaInicioController.text : 'Seleccionar Hora de Inicio',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Hora de Fin:',
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () async {
-                    final TimeOfDay? pickedTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (pickedTime != null) {
-                      horaFinalController.text = pickedTime.format(context);
-                    }
-                  },
-                  child: Text(
-                    horaFinalController.text.isNotEmpty ? horaFinalController.text : 'Seleccionar Hora de Fin',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: ElevatedButton(
-              onPressed: () {
-                // Lógica para guardar la sección
-              },
-              child: Text('Guardar'),
-            ),
-          ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildTextField(
+      TextEditingController controller, String labelText, IconData icon) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(icon),
+      ),
+      validator: (value) => value!.isEmpty ? "Este campo es obligatorio" : null,
+    );
+  }
+
+  Widget _buildNumericField(
+      TextEditingController controller, String labelText, IconData icon) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(icon),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Este campo es obligatorio';
+        }
+        if (double.tryParse(value) == null) {
+          return 'Ingrese un número válido';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildTimePicker(TextEditingController controller, String labelText) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.timer),
+        suffixIcon: IconButton(
+          icon: Icon(Icons.calendar_today),
+          onPressed: () async {
+            TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.now(),
+            );
+            if (pickedTime != null) {
+              controller.text = pickedTime.format(context);
+            }
+          },
+        ),
+      ),
+      readOnly: true,
+      validator: (value) => value!.isEmpty ? "Este campo es obligatorio" : null,
     );
   }
 }

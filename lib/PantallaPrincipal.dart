@@ -1,5 +1,4 @@
 import 'package:express_parking/Listas/OfertasList.dart';
-import 'package:express_parking/Listas/Reservas_globales.dart';
 import 'package:express_parking/Listas/historial.dart';
 import 'package:express_parking/LoginPage.dart';
 import 'package:express_parking/token/token.dart';
@@ -10,9 +9,8 @@ import 'package:geolocator/geolocator.dart';
 import 'marcador/marker_manager.dart';
 import 'Listas/VehiculosList.dart';
 import 'Listas/ParkingList.dart';
-import 'formularios/CrearOferta.dart';
-import 'Listas/HistorialParqueadas.dart';
 import 'Usuario/user.dart';
+
 
 class PantallaPrincipal extends StatefulWidget {
   const PantallaPrincipal({Key? key}) : super(key: key);
@@ -159,9 +157,9 @@ Drawer buildDrawer(BuildContext context) {
             children: <Widget>[
               Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.deepPurple,
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(25),
                     bottomRight: Radius.circular(25),
                   ),
@@ -178,11 +176,11 @@ Drawer buildDrawer(BuildContext context) {
                             size: 50.0, color: Colors.white),
                       ),
                       const SizedBox(height: 10),
-                      Text("JOSE ALEM RODRIGUEZ VALVERDE",
+                      const Text("JOSE ALEM RODRIGUEZ VALVERDE",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
-                      Text("josealem03@gmail.com",
+                      const Text("josealem03@gmail.com",
                           style: TextStyle(color: Colors.white)),
                     ],
                   ),
@@ -198,11 +196,9 @@ Drawer buildDrawer(BuildContext context) {
                   () => navigateTo(context, OfertasList())),
               buildListTile(Icons.history, 'Historial',
                   () => navigateTo(context, HistorialAccionesExitosas())),
-              buildListTile(Icons.search, 'Buscar',
-                  () => navigateTo(context, Reservasglobales())),
               ListTile(
-                leading: Icon(Icons.exit_to_app, color: Colors.red),
-                title: Text('Cerrar sesión'),
+                leading: const Icon(Icons.exit_to_app, color: Colors.red),
+                title: const Text('Cerrar sesión'),
                 onTap: () {
                   GlobalToken.userToken = null;
                   Navigator.of(context).popUntil((route) => route.isFirst);

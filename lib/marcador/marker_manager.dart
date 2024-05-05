@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'package:express_parking/token/token.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 import '../Listas/GarajeInfo.dart';
-import '../fakeTaxi/ParqueosDataModel.dart';
+import '../fakeTaxi/ParqueosDataModel.dart'; // Asegúrate de que el import es correcto
 
 class MarkerManager {
   final BuildContext context;
@@ -12,37 +11,38 @@ class MarkerManager {
   MarkerManager(this.context);
 
   Future<Set<Marker>> loadMarkers() async {
-    final url = Uri.parse('http://tu-api-url.com/garajes');
-    final response = await http.get(url, headers: {
-      'Authorization': 'Bearer ${GlobalToken.userToken}',
-    });
+    try {
+      String data = await rootBundle.loadString('json/parqueos.json');
+      List<dynamic> jsonList =
+          jsonDecode(data); // Cambiado a List<dynamic> para mejor claridad
+      Set<Marker> markers = {};
 
-    if (response.statusCode == 200) {
-      Iterable json = jsonDecode(response.body);
-      return json.map((garaje) {
-        var parqueoData = Garaje.fromJson(garaje);
-        if (parqueoData.latitud != null && parqueoData.longitud != null) {
-          return Marker(
-            markerId: MarkerId(parqueoData.id.toString()),
-            position: LatLng(parqueoData.latitud!, parqueoData.longitud!),
+      for (var garajeJson in jsonList) {
+        var garaje = Garaje.fromJson(garajeJson);
+        if (garaje.latitud != null && garaje.longitud != null) {
+          var marker = Marker(
+            markerId: MarkerId(garaje.id.toString()),
+            position: LatLng(garaje.latitud!, garaje.longitud!),
             infoWindow: InfoWindow(
-              title: parqueoData.direccion,
-              snippet: parqueoData.referencias,
+              title: garaje.direccion,
+              snippet: garaje.referencias,
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => GarajeInfo(data: parqueoData),
+                  builder: (context) => GarajeInfo(data: garaje),
                 ));
               },
             ),
             icon: BitmapDescriptor.defaultMarker,
           );
+          markers.add(marker);
         } else {
-          throw Exception(
-              'Latitud o longitud nulas para garaje ${parqueoData.id}');
+          throw Exception('Latitud o longitud nulas para garaje ${garaje.id}');
         }
-      }).toSet();
-    } else {
-      throw Exception('Failed to load markers from API');
+      }
+      return markers;
+    } catch (e) {
+      print('Error al cargar o parsear los marcadores: $e');
+      rethrow;
     }
   }
 }
