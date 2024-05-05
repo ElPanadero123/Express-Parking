@@ -1,35 +1,117 @@
 [
     {
         "id": 1,
-        "ancho": 120,
-        "largo": 80.5,
+        "nombre": "Garaje Central",
+        "imagenGaraje": "imagen_principal_garaje.jpg",
+        "ancho": 200,
+        "largo": 150,
         "direccion": "Av Piray 6to anillo",
-        "referencias": "porton azul",
+        "notas": "Dos pisos con palmeras",
+        "referencias": "portón azul",
         "latitud": "-17.713606766611388",
         "longitud": "-63.17146555223527",
-        "id_usuario": 100
-        
+        "idUsuario": 100,
+        "secciones": [
+            {
+                "idSeccion": 1,
+                "imagenSeccion": "seccion1.jpg",
+                "ancho": 5,
+                "largo": 5,
+                "horaInicio": "08:00",
+                "horaFinal": "22:00",
+                "estado": "disponible",
+                "altura": 2.5
+            }
+        ]
     },
     {
         "id": 2,
-        "ancho": 90,
-        "largo": 70.2,
+        "nombre": "Garaje Suburbano",
+        "imagenGaraje": "imagen_suburbano_garaje.jpg",
+        "ancho": 180,
+        "largo": 120,
         "direccion": "Calle Bolivar esq. Sucre",
-        "referencias": "frente al parque",
-        "latitud": "-17.749359834084576",
-        "longitud": "-63.175701028125076",
-        "id_usuario": 101
-       
+        "notas": "Espacio amplio, ideal para vehículos grandes",
+        "referencias": "Al lado de la gasolinera Cometa",
+        "latitud": "-17.801234",
+        "longitud": "-63.204321",
+        "idUsuario": 101,
+        "secciones": [
+            {
+                "idSeccion": 2,
+                "imagenSeccion": "seccion2.jpg",
+                "ancho": 6,
+                "largo": 6,
+                "horaInicio": "06:00",
+                "horaFinal": "18:00",
+                "estado": "disponible",
+                "altura": 3
+            },
+            {
+                "idSeccion": 3,
+                "imagenSeccion": "seccion3.jpg",
+                "ancho": 6,
+                "largo": 6,
+                "horaInicio": "06:00",
+                "horaFinal": "18:00",
+                "estado": "ocupado",
+                "altura": 3
+            },
+            {
+                "idSeccion": 4,
+                "imagenSeccion": "seccion4.jpg",
+                "ancho": 6,
+                "largo": 6,
+                "horaInicio": "06:00",
+                "horaFinal": "18:00",
+                "estado": "disponible",
+                "altura": 3
+            },
+            {
+                "idSeccion": 5,
+                "imagenSeccion": "seccion5.jpg",
+                "ancho": 6,
+                "largo": 6,
+                "horaInicio": "06:00",
+                "horaFinal": "18:00",
+                "estado": "ocupado",
+                "altura": 3
+            }
+        ]
     },
     {
         "id": 3,
-        "ancho": 150,
-        "largo": 100.8,
+        "nombre": "Garaje Urbano",
+        "imagenGaraje": "imagen_urbano_garaje.jpg",
+        "ancho": 160,
+        "largo": 100,
         "direccion": "Av. San Martin 4to anillo",
-        "referencias": "al lado del supermercado",
-        "latitud": "-17.72283996146226",
-        "longitud": "-63.172384971853454",
-        "id_usuario": 102
-        
+        "notas": "Acceso restringido con tarjeta magnética, cámaras de seguridad",
+        "referencias": "Detrás del teatro municipal",
+        "latitud": "-17.792456",
+        "longitud": "-63.181789",
+        "idUsuario": 102,
+        "secciones": [
+            {
+                "idSeccion": 6,
+                "imagenSeccion": "seccion6.jpg",
+                "ancho": 4,
+                "largo": 4,
+                "horaInicio": "07:00",
+                "horaFinal": "23:00",
+                "estado": "disponible",
+                "altura": 2
+            },
+            {
+                "idSeccion": 7,
+                "imagenSeccion": "seccion7.jpg",
+                "ancho": 4,
+                "largo": 4,
+                "horaInicio": "07:00",
+                "horaFinal": "23:00",
+                "estado": "ocupado",
+                "altura": 2
+            }
+        ]
     }
 ]
