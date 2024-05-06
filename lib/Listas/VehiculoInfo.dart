@@ -1,11 +1,12 @@
 import 'package:express_parking/fakeTaxi/OfertasDataModel.dart';
+import 'package:express_parking/fakeTaxi/VehiculosDataModel.dart';
 import 'package:flutter/material.dart';
 import '../fakeTaxi/ParqueosDataModel.dart'; // Asegúrate de que la ruta de importación es correcta
 
 class VehiculoInfo extends StatefulWidget {
-  
+  final VehiculosDataModel vehiculo;
 
- 
+  VehiculoInfo({required this.vehiculo});
 
   @override
   _VehiculoInfoState createState() => _VehiculoInfoState();
@@ -70,18 +71,47 @@ class _VehiculoInfoState extends State<VehiculoInfo> {
       padding: EdgeInsets.all(40.0),
       child: Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-                'Modelo: Sudan'),
+              'Marca: ${widget.vehiculo.marca}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10), // Espacio entre líneas
             Text(
-                'Placa: HFDHS'),
-            SizedBox(height: 20), // Añade un espacio entre textos y el botón
-            
+              'Modelo: ${widget.vehiculo.modelo}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Matrícula: ${widget.vehiculo.matricula}',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Color: ${widget.vehiculo.color}',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Altura: ${widget.vehiculo.altura} metros',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Ancho: ${widget.vehiculo.ancho} metros',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Largo: ${widget.vehiculo.largo} metros',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(
+                height: 20), // Espacio antes del botón o siguiente elemento
           ],
         ),
       ),
     );
   }
-
-  
 }

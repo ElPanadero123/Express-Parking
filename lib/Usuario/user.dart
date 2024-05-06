@@ -12,8 +12,8 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  late String _username;
-  late String _email;
+  String? _username;
+  String? _email;
 
   @override
   void initState() {
@@ -23,7 +23,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Future<void> _initializeUserData() async {
     final response = await http.get(
-      Uri.parse('https://laravelapiparking-production.up.railway.app/api/showUser'),
+      Uri.parse(
+          'https://laravelapiparking-production.up.railway.app/api/showUser'),
       headers: <String, String>{
         'Authorization': 'Bearer ${GlobalToken.userToken}',
       },
@@ -31,11 +32,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     print('Body: ${response.body}');
     if (response.statusCode == 200) {
       final userData = jsonDecode(response.body);
-  final usuarioData = userData['usuario'];
-  setState(() {
-    _username = usuarioData['nombre'];
-    _email = usuarioData['correo'];
-
+      final usuarioData = userData['usuario'];
+      setState(() {
+        _username = usuarioData['nombre'];
+        _email = usuarioData['correo'];
       });
     } else {
       print('Error al obtener los datos del usuario: ${response.statusCode}');

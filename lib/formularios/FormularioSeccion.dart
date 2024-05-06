@@ -127,7 +127,9 @@ class _FormularioSeccionState extends State<FormularioSeccion> {
               initialTime: TimeOfDay.now(),
             );
             if (pickedTime != null) {
-              controller.text = pickedTime.format(context);
+              // Formatea la hora en formato de 24 horas
+              final String formattedTime = _formatTime(pickedTime);
+              controller.text = formattedTime;
             }
           },
         ),
@@ -135,5 +137,12 @@ class _FormularioSeccionState extends State<FormularioSeccion> {
       readOnly: true,
       validator: (value) => value!.isEmpty ? "Este campo es obligatorio" : null,
     );
+  }
+
+  String _formatTime(TimeOfDay time) {
+    // Formatea el tiempo para que sea compatible con MySQL
+    final String formattedTime =
+        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+    return formattedTime;
   }
 }

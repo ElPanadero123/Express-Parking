@@ -1,5 +1,9 @@
+import 'package:express_parking/fakeTaxi/ParqueosDataModel.dart';
 import 'package:flutter/material.dart';
-import '../fakeTaxi/ParqueosDataModel.dart'; // Asegúrate de que la ruta de importación es correcta
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:express_parking/token/token.dart';
 
 class GarajeInfo extends StatefulWidget {
   final Garaje data;
@@ -11,26 +15,56 @@ class GarajeInfo extends StatefulWidget {
 }
 
 class _GarajeInfoState extends State<GarajeInfo> {
+  bool _isLoading = true;
+  late List<Garaje> _garajes;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchGarajes();
+  }
+
+  Future<void> _fetchGarajes() async {
+    final token = GlobalToken.userToken;
+    final response = await http.get(
+      Uri.parse(
+          'https://laravelapiparking-production.up.railway.app/api/getGarajes'),
+      headers: {'Authorization': 'Bearer ${GlobalToken.userToken}'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        _garajes = (data['garajes'] as List)
+            .map((garaje) => Garaje.fromJson(garaje))
+            .toList();
+        _isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load garaje data');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          _buildTopContent(),
-          Expanded(child: _buildBottomContent()),
-        ],
-      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: <Widget>[
+                _buildTopContent(),
+                Expanded(child: _buildBottomContent()),
+              ],
+            ),
     );
   }
 
-Widget _buildTopContent() {
+  Widget _buildTopContent() {
     return ClipRRect(
-      borderRadius: BorderRadius.vertical(
-          bottom:
-              Radius.circular(25.0)), // Bordes redondeados en la parte inferior
+      borderRadius: BorderRadius.vertical(bottom: Radius.circular(25.0)),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.3,
-        width: MediaQuery.of(context).size.width * 100,
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.blueGrey.shade800, Colors.black87],
@@ -39,9 +73,7 @@ Widget _buildTopContent() {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20.0,
-              vertical: 40.0), // Eliminado el padding horizontal
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -70,8 +102,6 @@ Widget _buildTopContent() {
       ),
     );
   }
-
-
 
   Widget _buildBottomContent() {
     return Container(
@@ -102,7 +132,7 @@ Widget _buildTopContent() {
               onPressed: _saveData,
               child: Text('Guardar'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Nuevo color para el botón
+                backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
               ),
             ),
@@ -126,7 +156,7 @@ Widget _buildTopContent() {
             TextButton(
               child: Text("Cerrar"),
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el diálogo
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -147,7 +177,7 @@ Widget _buildTopContent() {
             TextButton(
               child: Text("OK"),
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el diálogo
+                Navigator.of(context).pop();
               },
             ),
           ],

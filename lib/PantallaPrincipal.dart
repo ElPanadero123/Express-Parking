@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:express_parking/Listas/OfertasList.dart';
 import 'package:express_parking/Listas/historial.dart';
 import 'package:express_parking/LoginPage.dart';
@@ -6,11 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'marcador/marker_manager.dart';
 import 'Listas/VehiculosList.dart';
 import 'Listas/ParkingList.dart';
 import 'Usuario/user.dart';
-
+import 'package:http/http.dart' as http;
 
 class PantallaPrincipal extends StatefulWidget {
   const PantallaPrincipal({Key? key}) : super(key: key);
@@ -19,11 +22,13 @@ class PantallaPrincipal extends StatefulWidget {
   _PantallaPrincipalState createState() => _PantallaPrincipalState();
 }
 
-class _PantallaPrincipalState extends State<PantallaPrincipal> with WidgetsBindingObserver {
+class _PantallaPrincipalState extends State<PantallaPrincipal>
+    with WidgetsBindingObserver {
   late GoogleMapController mapController;
   late MarkerManager markerManager;
   Set<Marker> markers = {};
-
+  var nombreCompleto;
+  var correo;
   @override
   void initState() {
     super.initState();
@@ -31,6 +36,31 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> with WidgetsBindi
     markerManager = MarkerManager(context);
     _loadMarkers();
     _determinePosition();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('userToken');
+    final response = await http.get(
+      Uri.parse(
+          'https://laravelapiparking-production.up.railway.app/api/showUser'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      if (data['status'] == 200) {
+        setState(() {
+          nombreCompleto =
+              "${data['usuario']['nombre']} ${data['usuario']['apellido']}";
+          correo = data['usuario']['correo'];
+        });
+      }
+    } else {
+      // Manejar errores adecuadamente
+      print('Error al obtener los datos del usuario: ${response.body}');
+    }
   }
 
   @override
@@ -146,13 +176,12 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> with WidgetsBindi
     );
   }
 
-Drawer buildDrawer(BuildContext context) {
+  Drawer buildDrawer(BuildContext context) {
     return Drawer(
       child: SingleChildScrollView(
         child: Container(
-          color: Colors
-              .white,
-              height: MediaQuery.of(context).size.height,
+          color: Colors.white,
+          height: MediaQuery.of(context).size.height,
           child: Column(
             children: <Widget>[
               Container(
@@ -176,11 +205,11 @@ Drawer buildDrawer(BuildContext context) {
                             size: 50.0, color: Colors.white),
                       ),
                       const SizedBox(height: 10),
-                      const Text("JOSE ALEM RODRIGUEZ VALVERDE",
+                      Text(nombreCompleto ?? "Cargando...",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
-                      const Text("josealem03@gmail.com",
+                      Text(correo ?? "Cargando...",
                           style: TextStyle(color: Colors.white)),
                     ],
                   ),

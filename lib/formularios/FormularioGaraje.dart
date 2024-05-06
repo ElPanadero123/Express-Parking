@@ -86,7 +86,6 @@ class _FormularioGarajeState extends State<FormularioGaraje> {
     }
   }
 
-
   void _onCameraMove(CameraPosition position) {
     if (_debouncer?.isActive ?? false) _debouncer!.cancel();
     _debouncer = Timer(const Duration(milliseconds: 1000), () {
@@ -200,7 +199,6 @@ class _FormularioGarajeState extends State<FormularioGaraje> {
             }
           });
         },
-
         validator: (value) =>
             value!.isEmpty ? 'Este campo es obligatorio' : null,
       ),
@@ -230,7 +228,6 @@ class _FormularioGarajeState extends State<FormularioGaraje> {
       Fluttertoast.showToast(msg: 'Error al buscar la dirección: $e');
     }
   }
-
 
   Widget _buildSeccionTile(Seccion sec) {
     return ListTile(
@@ -268,32 +265,62 @@ class _FormularioGarajeState extends State<FormularioGaraje> {
       return;
     }
 
+    // Construcción del JSON para la solicitud
     var garajeData = {
-      'direccion': direccionController.text,
-      'latitud': latitudController.text,
-      'longitud': longitudController.text,
-      'secciones': secciones.map((s) => s.toJson()).toList(),
-      'imagen_garaje': imagenController.text,
+      'imagen_garaje':
+          imagenController.text.isNotEmpty ? imagenController.text : null,
       'ancho': double.parse(anchoController.text),
       'largo': double.parse(largoController.text),
-      'notas': notasController.text,
-      'referencias': referenciasController.text,
+      'direccion': direccionController.text,
+      'notas': notasController.text.isNotEmpty ? notasController.text : null,
+      'referencias': referenciasController.text.isNotEmpty
+          ? referenciasController.text
+          : null,
+      'latitud': latitudController.text,
+      'longitud': longitudController.text,
+      'secciones': secciones
+          .map((sec) => {
+                'imagen_seccion':
+                    sec.imagenSeccion.isNotEmpty ? sec.imagenSeccion : null,
+                'ancho': sec.ancho,
+                'largo': sec.largo,
+                'hora_inicio': sec.horaInicio.toString().padLeft(
+                    8, '0'), // Formatear hora_inicio en formato 24 horas
+                'hora_final': sec.horaFinal.toString().padLeft(
+                    8, '0'), // Formatear hora_final en formato 24 horas
+                'estado': sec.estado,
+                'altura': sec.altura,
+              })
+          .toList(),
     };
 
-    var response = await http.post(
-      Uri.parse('https://api.example.com/garajes'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${GlobalToken.userToken}',
-      },
-      body: json.encode(garajeData),
-    );
+    var client = http.Client();
 
-    if (response.statusCode == 200) {
-      Fluttertoast.showToast(msg: 'Garaje guardado con éxito!');
-    } else {
-      Fluttertoast.showToast(
-          msg: 'Error al guardar el garaje: ${response.body}');
+    try {
+      var response = await client.post(
+        Uri.parse(
+            'https://laravelapiparking-production.up.railway.app/api/garajes'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer 14|nBJx6Iq5RSwPxnTeVd2dQ1r9HaEo12n1T3YBaDlZc7014374',
+        },
+        body: json.encode(garajeData),
+      );
+
+      if (response.statusCode == 201) {
+        Fluttertoast.showToast(msg: 'Garaje guardado con éxito!');
+        Navigator.pop(
+            context); // Regresar a la pantalla anterior si es necesario
+      } else {
+        Fluttertoast.showToast(
+            msg:
+                'Error al guardar el garaje: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Error al realizar la solicitud: $e');
+    } finally {
+      client.close();
     }
   }
 }
