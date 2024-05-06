@@ -14,7 +14,7 @@ class MarkerManager {
 
   Future<Set<Marker>> loadMarkers() async {
     try {
-      var url = Uri.parse(
+      var url = Uri.parse(  
           'https://laravelapiparking-production.up.railway.app/api/getall');
       var response = await http.get(url, headers: {
         'Authorization': 'Bearer ${GlobalToken.userToken}',

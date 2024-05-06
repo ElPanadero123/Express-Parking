@@ -28,7 +28,7 @@ class _GarajeInfoState extends State<GarajeInfo> {
     final token = GlobalToken.userToken;
     final response = await http.get(
       Uri.parse(
-          'https://laravelapiparking-production.up.railway.app/api/getGarajes'),
+          'https://laravelapiparking-production.up.railway.app/api/getall'),
       headers: {'Authorization': 'Bearer ${GlobalToken.userToken}'},
     );
 
